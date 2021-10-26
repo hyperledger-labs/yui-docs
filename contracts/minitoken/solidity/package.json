@@ -3,9 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "postinstall": "npm run compile:ibc",
     "compile": "truffle compile",
-    "compile:ibc": "cd node_modules/@hyperledger-labs/yui-ibc-solidity && truffle compile",
     "fmt": "npx prettier --write 'contracts/**/*.sol'"
   },
   "author": "Datachain, Inc.",

@@ -14,7 +14,6 @@ build: build-contract build-relayer build-container
 
 build-contract:
 	@make -C ../../contracts/minitoken/solidity build
-#	npm run compile
 
 build-relayer:
 	@make -C relayer build

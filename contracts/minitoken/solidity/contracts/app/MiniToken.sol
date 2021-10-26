@@ -5,7 +5,6 @@ import "@hyperledger-labs/yui-ibc-solidity/contracts/core/IBCHandler.sol";
 import "@hyperledger-labs/yui-ibc-solidity/contracts/core/IBCHost.sol";
 import "@hyperledger-labs/yui-ibc-solidity/contracts/core/IBCModule.sol";
 import "@hyperledger-labs/yui-ibc-solidity/contracts/core/types/Channel.sol";
-//import "@hyperledger-labs/yui-ibc-solidity/contracts/lib/strings.sol";
 import "@hyperledger-labs/yui-ibc-solidity/contracts/lib/Bytes.sol";
 import "openzeppelin-solidity/contracts/utils/Address.sol";
 import "../lib/Packet.sol";
