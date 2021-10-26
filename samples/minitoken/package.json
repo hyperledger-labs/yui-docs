@@ -1,0 +1,34 @@
+{
+  "name": "minitoken-besu-ethereum",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "postinstall": "npm run compile:ibc",
+    "compile": "truffle compile",
+    "compile:ibc": "cd node_modules/@hyperledger-labs/yui-ibc-solidity && truffle compile",
+    "migrate:ibc0": "truffle migrate --network=ibc0 --compile-none",
+    "migrate:ibc1": "truffle migrate --network=ibc1 --compile-none",
+    "lint": "./node_modules/.bin/textlint docs/ja/",
+    "fmt": "npx prettier --write 'contracts/**/*.sol' 'test/**/*.js' 'truffle-config.js'"
+  },
+  "author": "Datachain, Inc.",
+  "license": "Apache-2.0",
+  "licenses": [
+    {
+      "type": "Apache-2.0",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0"
+    }
+  ],
+  "devDependencies": {
+    "textlint": "^12.0.2",
+    "textlint-rule-preset-ja-technical-writing": "^7.0.0",
+    "textlint-rule-preset-jtf-style": "^2.3.12"
+  },
+  "dependencies": {
+    "@hyperledger-labs/yui-ibc-solidity": "git+https://git@github.com/hyperledger-labs/yui-ibc-solidity.git#14abc6cf36ddec3d899cd77bd308b0ce7b6a2f3e",
+    "openzeppelin-solidity": "^3.4.0",
+    "@truffle/hdwallet-provider": "^1.2.1",
+    "truffle": "5.4.16",
+    "truffle-contract-size": "^2.0.1"
+  }
+}
