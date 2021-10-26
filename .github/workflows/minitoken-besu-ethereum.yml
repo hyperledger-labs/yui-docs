@@ -1,16 +1,24 @@
-name: MiniToken Solidity E2E
+name: minitoken-besu-ethereum
 
 on:
   push:
     branches: [ main ]
+    paths:
+      - 'contracts/minitoken/solidity/**'
+      - 'samples/minitoken-besu-ethereum/**'
+      - '.github/workflows/minitoken-besu-ethereum.yml'
   pull_request:
+    paths:
+      - 'contracts/minitoken/solidity/**'
+      - 'samples/minitoken-besu-ethereum/**'
+      - '.github/workflows/minitoken-besu-ethereum.yml'
 
 jobs:
   e2e:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./samples/minitoken
+        working-directory: ./samples/minitoken-besu-ethereum
     steps:
       - uses: actions/checkout@v2
       - name: Set up Go 1.16
