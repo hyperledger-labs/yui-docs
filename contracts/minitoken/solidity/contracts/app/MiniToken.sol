@@ -6,7 +6,6 @@ import "@hyperledger-labs/yui-ibc-solidity/contracts/core/IBCHost.sol";
 import "@hyperledger-labs/yui-ibc-solidity/contracts/core/IBCModule.sol";
 import "@hyperledger-labs/yui-ibc-solidity/contracts/core/types/Channel.sol";
 import "@hyperledger-labs/yui-ibc-solidity/contracts/lib/Bytes.sol";
-import "openzeppelin-solidity/contracts/utils/Address.sol";
 import "../lib/Packet.sol";
 
 contract MiniToken is IModuleCallbacks {
@@ -52,7 +51,6 @@ contract MiniToken is IModuleCallbacks {
         _;
     }
 
-    /// ICS20Transfer
     function sendTransfer(
         uint64 amount,
         address receiver,
@@ -81,8 +79,6 @@ contract MiniToken is IModuleCallbacks {
             amount
         );
     }
-
-    using Address for address;
 
     mapping(address => uint256) private _balances;
 
@@ -198,6 +194,8 @@ contract MiniToken is IModuleCallbacks {
         string calldata portId,
         string calldata channelId
     ) external virtual override {}
+
+    // Internal Functions //
 
     function _sendPacket(
         MiniTokenPacketData.Data memory data,
