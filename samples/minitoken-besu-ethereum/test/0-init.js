@@ -3,7 +3,6 @@ const MiniToken = artifacts.require("MiniToken");
 module.exports = async (callback) => {
   const accounts = await web3.eth.getAccounts();
   const alice = accounts[1];
-  console.log(alice);
   const mintAmount = 100;
 
   const miniToken = await MiniToken.deployed();
