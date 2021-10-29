@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: Apache-2.0
-pragma solidity ^0.6.8;
+pragma solidity ^0.8.9;
 
 /**
  * @title Runtime library for ProtoBuf serialization and/or deserialization.
@@ -49,7 +49,7 @@ library ProtoBufRuntime {
             (length << (BYTE_SIZE * REMAINING_LENGTH));
 
         assembly {
-            sstore(location_slot, firstWord)
+            sstore(location.slot, firstWord)
         }
 
         if (length > REMAINING_LENGTH) {
@@ -59,7 +59,7 @@ library ProtoBufRuntime {
                     let offset := add(mul(i, wordLength), remainingLength)
                     let slotIndex := add(i, 1)
                     sstore(
-                        add(location_slot, slotIndex),
+                        add(location.slot, slotIndex),
                         mload(add(add(encoded, wordLength), offset))
                     )
                 }
@@ -86,7 +86,7 @@ library ProtoBufRuntime {
         uint256 wordLength = WORD_LENGTH;
 
         assembly {
-            firstWord := sload(location_slot)
+            firstWord := sload(location.slot)
         }
 
         uint256 length = firstWord >> (BYTE_SIZE * REMAINING_LENGTH);
@@ -104,7 +104,7 @@ library ProtoBufRuntime {
                     let slotIndex := add(i, 1)
                     mstore(
                         add(add(encoded, wordLength), offset),
-                        sload(add(location_slot, slotIndex))
+                        sload(add(location.slot, slotIndex))
                     )
                 }
             }
@@ -124,7 +124,7 @@ library ProtoBufRuntime {
         uint256 len
     ) internal pure {
         // Copy word-length chunks while possible
-        for (; len >= WORD_LENGTH; len -= WORD_LENGTH) {
+        for (; len > WORD_LENGTH; len -= WORD_LENGTH) {
             assembly {
                 mstore(dest, mload(src))
             }
@@ -1961,7 +1961,7 @@ library ProtoBufRuntime {
         uint256 p,
         bytes memory bs
     ) internal pure returns (uint256) {
-        return _encode_sol(uint256(x), 20, p, bs);
+        return _encode_sol(uint256(uint160(x)), 20, p, bs);
     }
 
     function _encode_sol_uint(

@@ -8,7 +8,7 @@
     "compile:ibc": "cd node_modules/@hyperledger-labs/yui-ibc-solidity && truffle compile",
     "migrate:ibc0": "truffle migrate --network=ibc0 --compile-none",
     "migrate:ibc1": "truffle migrate --network=ibc1 --compile-none",
-    "fmt": "npx prettier --write 'contracts/**/*.sol' 'test/**/*.js' 'truffle-config.js'"
+    "fmt": "npx prettier --write 'test/**/*.js' 'truffle-config.js'"
   },
   "author": "Datachain, Inc.",
   "license": "Apache-2.0",
@@ -24,6 +24,6 @@
     "truffle-contract-size": "^2.0.1"
   },
   "dependencies": {
-    "@hyperledger-labs/yui-ibc-solidity": "git+https://git@github.com/hyperledger-labs/yui-ibc-solidity.git#14abc6cf36ddec3d899cd77bd308b0ce7b6a2f3e"
+    "@hyperledger-labs/yui-ibc-solidity": "git+https://git@github.com/hyperledger-labs/yui-ibc-solidity.git#005afbf57d24514842ec04c620a516c36507e370"
   }
 }

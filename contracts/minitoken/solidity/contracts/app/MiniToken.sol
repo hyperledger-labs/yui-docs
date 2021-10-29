@@ -1,5 +1,5 @@
 pragma experimental ABIEncoderV2;
-pragma solidity ^0.6.8;
+pragma solidity ^0.8.9;
 
 import "@hyperledger-labs/yui-ibc-solidity/contracts/core/IBCHandler.sol";
 import "@hyperledger-labs/yui-ibc-solidity/contracts/core/IBCHost.sol";
@@ -191,6 +191,16 @@ contract MiniToken is IModuleCallbacks {
     ) external virtual override {}
 
     function onChanOpenConfirm(
+        string calldata portId,
+        string calldata channelId
+    ) external virtual override {}
+
+    function onChanCloseConfirm(
+        string calldata portId,
+        string calldata channelId
+    ) external virtual override {}
+
+    function onChanCloseInit(
         string calldata portId,
         string calldata channelId
     ) external virtual override {}

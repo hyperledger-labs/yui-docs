@@ -18,6 +18,6 @@
     "truffle": "5.4.16"
   },
   "dependencies": {
-    "@hyperledger-labs/yui-ibc-solidity": "git+https://git@github.com/hyperledger-labs/yui-ibc-solidity.git#14abc6cf36ddec3d899cd77bd308b0ce7b6a2f3e"
+    "@hyperledger-labs/yui-ibc-solidity": "git+https://git@github.com/hyperledger-labs/yui-ibc-solidity.git#005afbf57d24514842ec04c620a516c36507e370"
   }
 }
