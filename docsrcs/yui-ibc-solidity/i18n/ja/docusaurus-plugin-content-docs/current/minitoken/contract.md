@@ -228,6 +228,8 @@ interface IModuleCallbacks {
     function onChanOpenTry(Channel.Order, string[] calldata connectionHops, string calldata portId, string calldata channelId, ChannelCounterparty.Data calldata counterparty, string calldata version, string calldata counterpartyVersion) external;
     function onChanOpenAck(string calldata portId, string calldata channelId, string calldata counterpartyVersion) external;
     function onChanOpenConfirm(string calldata portId, string calldata channelId) external;
+    function onChanCloseInit(string calldata portId, string calldata channelId) external;
+    function onChanCloseConfirm(string calldata portId, string calldata channelId) external;
 
     function onRecvPacket(Packet.Data calldata) external returns(bytes memory);
     function onAcknowledgementPacket(Packet.Data calldata, bytes calldata acknowledgement) external;
@@ -244,6 +246,8 @@ interface IModuleCallbacks {
 - onChanOpenTry
 - onChanOpenAck
 - onChanOpenConfirm
+- onChanCloseInit
+- onChanCloseConfirm
 
 IBCにおけるChannelのライフサイクルについて詳しく知りたい方は、以下を参照ください。
 https://github.com/cosmos/ibc/blob/ad99cb444ece8becae59f995b3371dc1ffc3ec5b/spec/core/ics-004-channel-and-packet-semantics/README.md#channel-lifecycle-management
