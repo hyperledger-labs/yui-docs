@@ -97,7 +97,6 @@ contract MiniToken is IModuleCallbacks {
     }
 
     function balanceOf(address account) public view returns (uint256) {
-        require(account != address(0), "Token: invalid address");
         return _balances[account];
     }
 
