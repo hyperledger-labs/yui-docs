@@ -1,4 +1,3 @@
-pragma experimental ABIEncoderV2;
 pragma solidity ^0.8.9;
 
 import "@hyperledger-labs/yui-ibc-solidity/contracts/core/IBCHandler.sol";
