@@ -38,14 +38,14 @@ contract MiniToken is IModuleCallbacks {
     );
 
     modifier onlyOwner() {
-        require(msg.sender == owner, "caller is not the owner");
+        require(msg.sender == owner, "MiniToken: caller is not the owner");
         _;
     }
 
     modifier onlyIBC() {
         require(
             msg.sender == address(ibcHandler),
-            "caller is not the ibcHandler"
+            "MiniToken: caller is not the ibcHandler"
         );
         _;
     }
@@ -57,7 +57,7 @@ contract MiniToken is IModuleCallbacks {
         string calldata sourceChannel,
         uint64 timeoutHeight
     ) external {
-        require(_burn(msg.sender, amount));
+        require(_burn(msg.sender, amount), "MiniToken: failed to burn");
 
         _sendPacket(
             MiniTokenPacketData.Data({
@@ -82,11 +82,11 @@ contract MiniToken is IModuleCallbacks {
     mapping(address => uint256) private _balances;
 
     function mint(address account, uint256 amount) external onlyOwner {
-        require(_mint(account, amount), "invalid address");
+        require(_mint(account, amount), "MiniToken: invalid address");
     }
 
     function burn(uint256 amount) external {
-        require(_burn(msg.sender, amount), "invalid address");
+        require(_burn(msg.sender, amount), "MiniToken: failed to burn");
     }
 
     function transfer(address to, uint256 amount) external {
@@ -128,9 +128,9 @@ contract MiniToken is IModuleCallbacks {
         uint256 amount
     ) internal returns (bool, string memory) {
         if (from != address(0) || to != address(0)) {
-            return (false, "Token: invalid address");
+            return (false, "MiniToken: invalid address");
         } else if (_balances[from] >= amount) {
-            return (false, "Token: amount shortage");
+            return (false, "MiniToken: amount shortage");
         }
         _balances[from] -= amount;
         _balances[to] += amount;
@@ -215,7 +215,7 @@ contract MiniToken is IModuleCallbacks {
             sourcePort,
             sourceChannel
         );
-        require(found, "channel not found");
+        require(found, "MiniToken: channel not found");
         ibcHandler.sendPacket(
             Packet.Data({
                 sequence: ibcHost.getNextSequenceSend(
