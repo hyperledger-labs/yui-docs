@@ -19,6 +19,5 @@ The following ledgers are used:
 If you want to know more about IBC, please refer to
 [cosmos/ibc](https://github.com/cosmos/ibc)
 for more information about IBC.
-Also, the solidity implementation of IBC is
 For a solidity implementation of IBC, see [hyperledger-labs/yui-ibc-solidity](https://github.com/hyperledger-labs/yui-ibc-solidity).
 
