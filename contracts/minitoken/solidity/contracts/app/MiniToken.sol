@@ -82,7 +82,7 @@ contract MiniToken is IModuleCallbacks {
     mapping(address => uint256) private _balances;
 
     function mint(address account, uint256 amount) external onlyOwner {
-        require(_mint(account, amount), "MiniToken: invalid address");
+        require(_mint(account, amount));
     }
 
     function burn(uint256 amount) external {
@@ -101,18 +101,12 @@ contract MiniToken is IModuleCallbacks {
     }
 
     function _mint(address account, uint256 amount) internal returns (bool) {
-        if (account == address(0)) {
-            return false;
-        }
         _balances[account] += amount;
         emit Mint(account, amount);
         return true;
     }
 
     function _burn(address account, uint256 amount) internal returns (bool) {
-        if (account == address(0)) {
-            return false;
-        }
         uint256 accountBalance = _balances[account];
         if (accountBalance < amount) {
             return false;
@@ -127,9 +121,7 @@ contract MiniToken is IModuleCallbacks {
         address to,
         uint256 amount
     ) internal returns (bool, string memory) {
-        if (from != address(0) || to != address(0)) {
-            return (false, "MiniToken: invalid address");
-        } else if (_balances[from] >= amount) {
+        if (_balances[from] >= amount) {
             return (false, "MiniToken: amount shortage");
         }
         _balances[from] -= amount;
