@@ -31,7 +31,7 @@ The following states are also available:
 
 In this example, we simply use the account that generated the contract as the owner.
 
-```
+```solidity title="contracts/app/MiniToken.sol"
 address private owner;
 
 constructor() public {
@@ -119,7 +119,7 @@ for more information.
 
 MiniTokenPacketData holds the information necessary to transfer a MiniToken from the source ledger to the destination ledger.
 
-```proto
+```proto title="/proto/lib/Packet.proto"
 message MiniTokenPacketData {
     // the token amount to be transferred
     uint64 amount = 1;
@@ -137,11 +137,25 @@ message MiniTokenPacketData {
 Once you have defined the Packet
 Use [solidity-protobuf](https://github.com/datachainlab/solidity-protobuf) to generate the sol file.
 
+First, get solidity-protobuf and install the necessary modules.
+
 ```sh
 git clone https://github.com/datachainlab/solidity-protobuf.git
 cd solidity-protobuf
 pip install -r requirements.txt
-./run.sh --input <tutorial dir>/proto/lib/Packet.proto --output <tutorial dir>/contracts/lib
+```
+
+Set this folder to the SOLPB_DIR environment variable.
+
+```sh
+export SOLPB_DIR=<solidity-protobuf dir>
+```
+
+Then, on the working directory of the tutorial, generate the sol file.
+
+```sh
+cd <tutorial dir>
+make proto
 ```
 
 ### Modify constructor

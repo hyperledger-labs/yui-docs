@@ -21,3 +21,6 @@ If you want to know more about IBC, please refer to
 for more information about IBC.
 For a solidity implementation of IBC, see [hyperledger-labs/yui-ibc-solidity](https://github.com/hyperledger-labs/yui-ibc-solidity).
 
+The code for this tutorial can be downloaded from the following link, so please refer to it accordingly.
+- [Contracts](https://github.com/hyperledger-labs/yui-docs/tree/main/contracts/minitoken/solidity)
+- [Execution Environment](https://github.com/hyperledger-labs/yui-docs/tree/main/samples/minitoken-besu-ethereum)

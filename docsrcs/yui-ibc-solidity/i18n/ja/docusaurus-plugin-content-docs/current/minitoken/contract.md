@@ -31,7 +31,7 @@ ICS-20ではトークンの発行元をdenominationを用いて区別します�
 
 ここでは単純に、コントラクトを生成したアカウントをownerとしています。
 
-```
+```solidity title="contracts/app/MiniToken.sol"
 address private owner;
 
 constructor() public {
@@ -119,7 +119,7 @@ Packetに関して詳しく知りたい方は
 
 MiniTokenPacketDataは、MiniTokenを転送元台帳から転送先台帳に対して転送するのに必要な情報を保持します。
 
-```proto
+```proto title="/proto/lib/Packet.proto"
 message MiniTokenPacketData {
     // the token amount to be transferred
     uint64 amount = 1;
@@ -137,11 +137,25 @@ message MiniTokenPacketData {
 Packetを定義したら
 [solidity-protobuf](https://github.com/datachainlab/solidity-protobuf)を用いてsolファイルを生成します。
 
+まず、solidity-protobufを取得し、必要なモジュールをインストールします。
+
 ```sh
 git clone https://github.com/datachainlab/solidity-protobuf.git
 cd solidity-protobuf
 pip install -r requirements.txt
-./run.sh --input <tutorial dir>/proto/lib/Packet.proto --output <tutorial dir>/contracts/lib
+```
+
+このフォルダをSOLPB_DIR環境変数にセットします。
+
+```sh
+export SOLPB_DIR=<solidity-protobuf dir>
+```
+
+続いて、作業ディレクトリ側で、solファイルを生成します。
+
+```sh
+cd <tutorial dir>
+make proto
 ```
 
 ### constructor改修

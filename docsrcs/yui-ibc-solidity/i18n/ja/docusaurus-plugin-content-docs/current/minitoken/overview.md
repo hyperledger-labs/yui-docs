@@ -26,3 +26,6 @@ IBCについて詳しく知りたい方は
 [hyperledger-labs/yui-ibc-solidity](https://github.com/hyperledger-labs/yui-ibc-solidity)
 を参照ください。
 
+尚、このチュートリアルのコードは以下から入手できますので、適宜参照してください。
+- [コントラクト](https://github.com/hyperledger-labs/yui-docs/tree/main/contracts/minitoken/solidity)
+- [実行環境](https://github.com/hyperledger-labs/yui-docs/tree/main/samples/minitoken-besu-ethereum)
