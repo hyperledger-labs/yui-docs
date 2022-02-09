@@ -2,7 +2,10 @@ module github.com/hyperledger-labs/yui-docs/samples/minitoken/relayer
 
 go 1.16
 
-require github.com/hyperledger-labs/yui-relayer v0.1.2-0.20220124061305-6b081dc42621
+require (
+	github.com/datachainlab/ibc-ethmultisig-client v0.1.0
+	github.com/hyperledger-labs/yui-relayer v0.1.2-0.20220124061305-6b081dc42621
+)
 
 replace (
 	github.com/go-kit/kit => github.com/go-kit/kit v0.8.0

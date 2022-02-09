@@ -18,6 +18,7 @@
     "truffle": "5.4.16"
   },
   "dependencies": {
-    "@hyperledger-labs/yui-ibc-solidity": "git+https://git@github.com/hyperledger-labs/yui-ibc-solidity.git#482544f9ca215f3a239fb814803d5819c9f1602c"
+    "@hyperledger-labs/yui-ibc-solidity": "git+https://git@github.com/hyperledger-labs/yui-ibc-solidity.git#482544f9ca215f3a239fb814803d5819c9f1602c",
+    "@datachainlab/ibc-ethmultisig-client": "git+https://git@github.com/datachainlab/ibc-ethmultisig-client.git#f80c3eddac6760af6017d59b7370d98ee3f3aa77"
   }
 }

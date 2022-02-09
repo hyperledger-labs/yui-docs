@@ -6,16 +6,16 @@ const IBCChannel = artifacts.require("@hyperledger-labs/yui-ibc-solidity/IBCChan
 const IBCHandler = artifacts.require("@hyperledger-labs/yui-ibc-solidity/IBCHandler");
 const IBCMsgs = artifacts.require("@hyperledger-labs/yui-ibc-solidity/IBCMsgs");
 const IBCIdentifier = artifacts.require("@hyperledger-labs/yui-ibc-solidity/IBCIdentifier");
-const MockClient = artifacts.require("@hyperledger-labs/yui-ibc-solidity/MockClient");
+const MultisigClient = artifacts.require("@datachainlab/ibc-ethmultisig-client/MultisigClient")
 
 const PortTransfer = "transfer"
-const MockClientType = "mock-client"
+const MultisigClientType = "ethmultisig-client"
 
 const deployCore = async (deployer) => {
   await deployer.deploy(IBCIdentifier);
   await deployer.link(IBCIdentifier, [
     IBCHost, IBCHandler,
-    MockClient
+    MultisigClient
   ]);
 
   await deployer.deploy(IBCMsgs);
@@ -35,7 +35,7 @@ const deployCore = async (deployer) => {
   await deployer.deploy(IBCChannel);
   await deployer.link(IBCChannel, [IBCHandler]);
 
-  await deployer.deploy(MockClient);
+  await deployer.deploy(MultisigClient);
 
   await deployer.deploy(IBCHost);
   await deployer.deploy(IBCHandler, IBCHost.address);
@@ -52,7 +52,7 @@ const init = async (deployer) => {
   for(const promise of [
     () => ibcHost.setIBCModule(IBCHandler.address),
     () => ibcHandler.bindPort(PortTransfer, MiniToken.address),
-    () => ibcHandler.registerClient(MockClientType, MockClient.address),
+    () => ibcHandler.registerClient(MultisigClientType, MultisigClient.address),
   ]) {
     const result = await promise();
     console.log(result);
