@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+group_id=`pgrep -of relayer-start`
+
+if [ -n "$group_id" ]; then
+  kill -term -- -$group_id
+fi
