@@ -6,8 +6,8 @@ sidebar_position: 3
 
 We will implement a token that can be transferred between two ledgers using IBC.
 
-There is a token standard called [ICS-20](https://github.com/cosmos/ibc/tree/master/spec/app/ics-020-fungible-token-transfer),
-but we will use a simple one here.
+There is a token transfer standard called [ICS-20](https://github.com/cosmos/ibc/tree/master/spec/app/ics-020-fungible-token-transfer),
+but we do not support the standard here.
 
 While ICS-20 uses denomination to distinguish the source ledger,
 the MiniToken implemented here handles the issuer's ledger without distinction.
@@ -16,16 +16,16 @@ the MiniToken implemented here handles the issuer's ledger without distinction.
 
 It has the following basic operational functions:
 
-- mint: issue a new token for a given account
-- burn: burn your own token
-- transfer: Transfer your token to another account.
+- `mint`: issue a new token for a given account
+- `burn`: burn your own token
+- `transfer`: Transfer your token to another account.
 
 It also has a state reference function:
-- balanceOf: to get the token balance of an account.
+- `balanceOf`: to get the token balance of an account.
 
 The following states are also available:
-- balance: the balance of each account
-- owner: An account that is allowed to perform privileged operations such as mint.
+- `balances`: accounts and their respective token balances
+- `owner`: An account that is allowed to perform privileged operations such as mint.
 
 ### constructor
 
