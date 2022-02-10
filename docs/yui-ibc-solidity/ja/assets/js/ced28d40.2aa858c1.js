@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkyui_docs_yui_ibc_solidity=self.webpackChunkyui_docs_yui_ibc_solidity||[]).push([[241],{7773:function(i){i.exports={blogPosts:[]}}}]);
