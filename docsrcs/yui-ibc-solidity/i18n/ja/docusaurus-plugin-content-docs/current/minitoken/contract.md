@@ -311,7 +311,6 @@ https://github.com/hyperledger-labs/yui-ibc-solidity/tree/main/contracts/app
 ICS-20では通貨単位（denominationまたはdenom）を
 `{ics20Port}/{ics20Channel}/{denom}`として表現します。
 
-### Bankモジュール
+通貨単位を用いて、ICS-20トークンを元のチェーンまで遡ることが可能です。詳細については、以下を参照ください。
 
-ICS-20はCosmosの[Bankモジュール](https://docs.cosmos.network/master/modules/bank/)
-に依存しています。
+https://github.com/cosmos/ibc-go/blob/main/modules/apps/transfer/spec/01_concepts.md#denomination-trace

@@ -313,6 +313,6 @@ https://github.com/hyperledger-labs/yui-ibc-solidity/tree/main/contracts/app
 In ICS-20, the denomination or denom is represented as
 `{ics20Port}/{ics20Channel}/{denom}`.
 
-### Bank module
+Using denom, it is possible to trace an ICS-20 token back to its origin Chain. For more information, please refer to the following:
 
-ICS-20 depends on the Cosmos [Bank module](https://docs.cosmos.network/master/modules/bank/).
+https://github.com/cosmos/ibc-go/blob/main/modules/apps/transfer/spec/01_concepts.md#denomination-trace
