@@ -51,7 +51,7 @@ await MiniToken.deployed().then(instance => instance.mint(alice, 100));
 
 ```js
 MiniToken.deployed()
-    .then(instance => instance.getPastEvents("Mint", { fromBlock: 0 })
+    .then(instance => instance.getPastEvents("Mint", { fromBlock: 0 }))
     .then(event => console.log(event));
 ```
 

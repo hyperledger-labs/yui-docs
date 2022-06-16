@@ -27,5 +27,5 @@ This command generates static content into the `build` directory and can be serv
 You can view the generated contents as following.
 
 ```
-$ yarn servve
+$ yarn serve
 ```
