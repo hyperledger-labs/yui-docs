@@ -51,7 +51,7 @@ When `mint` succeeds, the `Mint` event will be emitted. To check this, do the fo
 
 ```js
 MiniToken.deployed()
-    .then(instance => instance.getPastEvents("Mint", { fromBlock: 0 })
+    .then(instance => instance.getPastEvents("Mint", { fromBlock: 0 }))
     .then(event => console.log(event));
 ```
 
