@@ -1,4 +1,4 @@
-DOCKER_COMPOSE ?= docker compose
+DOCKER_COMPOSE ?= docker-compose
 
 .PHONY: build network network-down
 build:

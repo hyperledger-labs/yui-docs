@@ -1,4 +1,4 @@
-DOCKER_COMPOSE ?= docker compose
+DOCKER_COMPOSE ?= docker-compose
 TRUFFLE ?= npx truffle
 TEST_OPTS ?= --compile-none --migrate-none
 
