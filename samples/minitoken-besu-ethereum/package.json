@@ -20,7 +20,7 @@
   ],
   "devDependencies": {
     "@truffle/hdwallet-provider": "^1.2.1",
-    "truffle": "5.4.16",
+    "truffle": "5.7.9",
     "truffle-contract-size": "^2.0.1"
   },
   "dependencies": {
