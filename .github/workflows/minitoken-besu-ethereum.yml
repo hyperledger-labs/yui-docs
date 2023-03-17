@@ -25,10 +25,10 @@ jobs:
         uses: actions/setup-go@v1
         with:
           go-version: 1.16
-      - name: Use Node.js 12
+      - name: Use Node.js 16
         uses: actions/setup-node@v2
         with:
-          node-version: 12.x
+          node-version: 16.x
       - name: Cache go modules
         uses: actions/cache@v2
         with:
