@@ -3,7 +3,7 @@ package main
 import (
 	"log"
 
-	ethereum "github.com/hyperledger-labs/yui-relayer/chains/ethereum/module"
+	"github.com/hyperledger-labs/yui-ibc-solidity/pkg/relay/ethereum"
 	"github.com/hyperledger-labs/yui-relayer/cmd"
 	mock "github.com/hyperledger-labs/yui-relayer/provers/mock/module"
 )
