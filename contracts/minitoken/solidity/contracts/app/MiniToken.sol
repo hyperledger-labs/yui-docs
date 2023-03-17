@@ -1,25 +1,24 @@
 // SPDX-License-Identifier: Apache-2.0
 pragma solidity ^0.8.9;
 
-import "@hyperledger-labs/yui-ibc-solidity/contracts/core/IBCHandler.sol";
-import "@hyperledger-labs/yui-ibc-solidity/contracts/core/IBCHost.sol";
-import "@hyperledger-labs/yui-ibc-solidity/contracts/core/IBCModule.sol";
-import "@hyperledger-labs/yui-ibc-solidity/contracts/core/types/Channel.sol";
-import "@hyperledger-labs/yui-ibc-solidity/contracts/lib/Bytes.sol";
+import "@hyperledger-labs/yui-ibc-solidity/contracts/core/OwnableIBCHandler.sol";
+// import "@hyperledger-labs/yui-ibc-solidity/contracts/core/24-host/IBCHost.sol";
+// import "@hyperledger-labs/yui-ibc-solidity/contracts/core/05-port/IIBCModule.sol";
+import "solidity-bytes-utils/contracts/BytesLib.sol";
 import "../lib/Packet.sol";
 
-contract MiniToken is IModuleCallbacks {
+contract MiniToken is IIBCModule {
     IBCHandler ibcHandler;
-    IBCHost ibcHost;
+    // OwnableIBCHandler ibcHost;
 
-    using Bytes for *;
+    using BytesLib for *;
 
     address private owner;
 
-    constructor(IBCHost host_, IBCHandler ibcHandler_) public {
+    constructor(IBCHandler ibcHandler_) public {
         owner = msg.sender;
 
-        ibcHost = host_;
+        // ibcHost = host_;
         ibcHandler = ibcHandler_;
     }
 
@@ -133,7 +132,7 @@ contract MiniToken is IModuleCallbacks {
 
     /// Module callbacks ///
 
-    function onRecvPacket(Packet.Data calldata packet)
+    function onRecvPacket(Packet.Data calldata packet, address relayer)
         external
         virtual
         override
@@ -144,12 +143,13 @@ contract MiniToken is IModuleCallbacks {
             packet.data
         );
         return
-            _newAcknowledgement(_mint(data.receiver.toAddress(), data.amount));
+            _newAcknowledgement(_mint(data.receiver.toAddress(0), data.amount));
     }
 
     function onAcknowledgementPacket(
         Packet.Data calldata packet,
-        bytes calldata acknowledgement
+        bytes calldata acknowledgement,
+        address relayer
     ) external virtual override onlyIBC {
         if (!_isSuccessAcknowledgement(acknowledgement)) {
             _refundTokens(MiniTokenPacketData.decode(packet.data));
@@ -204,14 +204,14 @@ contract MiniToken is IModuleCallbacks {
         string memory sourceChannel,
         uint64 timeoutHeight
     ) internal virtual {
-        (Channel.Data memory channel, bool found) = ibcHost.getChannel(
+        (Channel.Data memory channel, bool found) = ibcHandler.getChannel(
             sourcePort,
             sourceChannel
         );
         require(found, "MiniToken: channel not found");
         ibcHandler.sendPacket(
             Packet.Data({
-                sequence: ibcHost.getNextSequenceSend(
+                sequence: ibcHandler.getNextSequenceSend(
                     sourcePort,
                     sourceChannel
                 ),
@@ -258,6 +258,6 @@ contract MiniToken is IModuleCallbacks {
         internal
         virtual
     {
-        require(_mint(data.sender.toAddress(), data.amount));
+        require(_mint(data.sender.toAddress(0), data.amount));
     }
 }
