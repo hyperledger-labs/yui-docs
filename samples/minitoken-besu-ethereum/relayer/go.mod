@@ -3,7 +3,7 @@ module github.com/hyperledger-labs/yui-docs/samples/minitoken/relayer
 go 1.20
 
 require (
-	github.com/hyperledger-labs/yui-ibc-solidity v0.2.4
+	github.com/hyperledger-labs/yui-ibc-solidity v0.2.5-0.20230316063412-d9d0f68e11f4
 	github.com/hyperledger-labs/yui-relayer v0.3.0
 )
 

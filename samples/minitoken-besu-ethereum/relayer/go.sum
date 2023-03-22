@@ -606,8 +606,8 @@ github.com/huandu/xstrings v1.2.0/go.mod h1:DvyZB1rfVYsBIigL8HwpZgxHwXozlTgGqn63
 github.com/huin/goupnp v1.0.0 h1:wg75sLpL6DZqwHQN6E1Cfk6mtfzS45z8OV+ic+DtHRo=
 github.com/huin/goupnp v1.0.0/go.mod h1:n9v9KO1tAxYH82qOn+UTIFQDmx5n1Zxd/ClZDMX7Bnc=
 github.com/huin/goutil v0.0.0-20170803182201-1ca381bf3150/go.mod h1:PpLOETDnJ0o3iZrZfqZzyLl6l7F3c6L1oWn7OICBi6o=
-github.com/hyperledger-labs/yui-ibc-solidity v0.2.4 h1:aa1isN6Mbl35Q8wv8hNrD/hC6hhuA6/O0HU4UPbldoE=
-github.com/hyperledger-labs/yui-ibc-solidity v0.2.4/go.mod h1:ZGo8vbs7vyrZTx1dJk6a5+eKNwbJpyUcYnDrfC8JjXk=
+github.com/hyperledger-labs/yui-ibc-solidity v0.2.5-0.20230316063412-d9d0f68e11f4 h1:VyuT8Yd1wQnW43JfUKAD8nDNmVD3/OXCkuIaxsDNijs=
+github.com/hyperledger-labs/yui-ibc-solidity v0.2.5-0.20230316063412-d9d0f68e11f4/go.mod h1:ZGo8vbs7vyrZTx1dJk6a5+eKNwbJpyUcYnDrfC8JjXk=
 github.com/hyperledger-labs/yui-relayer v0.3.0 h1:9s/YOOmhdrCjQJcOy06VU7HlRCVnHrNeMZbsacLWBGo=
 github.com/hyperledger-labs/yui-relayer v0.3.0/go.mod h1:L+UZLFBu/D6lrlL+etxg8SH3eW9Zm7eZDn/0SncdDOw=
 github.com/iancoleman/strcase v0.2.0/go.mod h1:iwCmte+B7n89clKwxIoIXy/HfoL7AsD47ZCWhYzw7ho=
