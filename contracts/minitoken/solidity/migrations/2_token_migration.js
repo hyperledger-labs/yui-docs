@@ -48,14 +48,9 @@ const init = async (deployer) => {
     () => ibcHandler.bindPort(PortTransfer, MiniToken.address),
     () => ibcHandler.registerClient(MockClientType, MockClient.address),
   ]) {
-    try {
-      const result = await promise();
-      console.log(result);
-      if(!result.receipt.status) {
-        throw new Error(`transaction failed to execute. ${result.tx}`);
-      }
-    } catch (e) {
-      console.log(e)
+    const result = await promise();
+    if(!result.receipt.status) {
+      throw new Error(`transaction failed to execute. ${result.tx}`);
     }
   }
 }
