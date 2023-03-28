@@ -2,14 +2,11 @@
 pragma solidity ^0.8.9;
 
 import "@hyperledger-labs/yui-ibc-solidity/contracts/core/OwnableIBCHandler.sol";
-// import "@hyperledger-labs/yui-ibc-solidity/contracts/core/24-host/IBCHost.sol";
-// import "@hyperledger-labs/yui-ibc-solidity/contracts/core/05-port/IIBCModule.sol";
 import "solidity-bytes-utils/contracts/BytesLib.sol";
 import "../lib/Packet.sol";
 
 contract MiniToken is IIBCModule {
     IBCHandler ibcHandler;
-    // OwnableIBCHandler ibcHost;
 
     using BytesLib for *;
 
@@ -18,7 +15,6 @@ contract MiniToken is IIBCModule {
     constructor(IBCHandler ibcHandler_) public {
         owner = msg.sender;
 
-        // ibcHost = host_;
         ibcHandler = ibcHandler_;
     }
 
