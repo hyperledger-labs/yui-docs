@@ -63,7 +63,7 @@ IBC1上のBobへMiniTokenを50だけ転送します。
 const port = "transfer";
 const channel = "channel-0";
 
-const bob = accounts[1];
+const bob = accounts[2];
 await MiniToken.deployed()
     .then(instance => instance.sendTransfer(50, bob, port, channel, 0, {from: alice}));
 ```
