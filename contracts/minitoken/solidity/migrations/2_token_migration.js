@@ -13,28 +13,15 @@ const MockClientType = "mock-client"
 
 const deployCore = async (deployer) => {
   await deployer.deploy(IBCMsgs);
-  await deployer.link(IBCMsgs, [
-    IBCClient,
-    IBCConnection,
-    IBCChannel,
-    IBCHandler,
-  ]);
+  await deployer.deploy(IBCChannel);
 
   await deployer.deploy(IBCClient);
-  await deployer.link(IBCClient, [IBCHandler, IBCConnection, IBCChannel]);
-
   await deployer.deploy(IBCConnection);
-  await deployer.link(IBCConnection, [IBCHandler, IBCChannel]);
-
-  await deployer.deploy(IBCChannel);
-  await deployer.link(IBCChannel, [IBCHandler]);
-
   await deployer.deploy(IBCChannelHandshake);
   await deployer.deploy(IBCPacket);
   await deployer.deploy(IBCHandler, IBCClient.address, IBCConnection.address, IBCChannelHandshake.address, IBCPacket.address);
 
   await deployer.deploy(MockClient, IBCHandler.address);
-
 };
 
 const deployApp = async (deployer) => {
