@@ -306,7 +306,7 @@ The token implemented here is different from ICS-20.
 
 For an example of ICS-20 implementation, please refer to the following:
 
-https://github.com/hyperledger-labs/yui-ibc-solidity/tree/main/contracts/app
+https://github.com/hyperledger-labs/yui-ibc-solidity/tree/main/contracts/apps
 
 ### Distinction between currency units
 
@@ -315,4 +315,4 @@ In ICS-20, the denomination or denom is represented as
 
 Using denom, it is possible to trace an ICS-20 token back to its origin Chain. For more information, please refer to the following:
 
-https://github.com/cosmos/ibc-go/blob/main/modules/apps/transfer/spec/01_concepts.md#denomination-trace
+https://github.com/cosmos/ibc-go/blob/main/docs/apps/transfer/overview.md#denomination-trace

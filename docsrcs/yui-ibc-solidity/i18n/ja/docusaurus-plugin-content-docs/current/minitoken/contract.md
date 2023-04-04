@@ -304,7 +304,7 @@ function onAcknowledgementPacket(Packet.Data calldata packet, bytes calldata ack
 
 尚、ICS-20の実装例としては以下を参照ください。
 
-https://github.com/hyperledger-labs/yui-ibc-solidity/tree/main/contracts/app
+https://github.com/hyperledger-labs/yui-ibc-solidity/tree/main/contracts/apps
 
 ### 通貨単位の区別
 
@@ -313,4 +313,4 @@ ICS-20では通貨単位（denominationまたはdenom）を
 
 通貨単位を用いて、ICS-20トークンを元のチェーンまで遡ることが可能です。詳細については、以下を参照ください。
 
-https://github.com/cosmos/ibc-go/blob/main/modules/apps/transfer/spec/01_concepts.md#denomination-trace
+https://github.com/cosmos/ibc-go/blob/main/docs/apps/transfer/overview.md#denomination-trace
