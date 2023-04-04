@@ -1,20 +1,15 @@
 const MiniToken = artifacts.require("MiniToken");
 const IBCClient = artifacts.require("@hyperledger-labs/yui-ibc-solidity/IBCClient");
 const IBCConnection = artifacts.require("@hyperledger-labs/yui-ibc-solidity/IBCConnection");
-const IBCChannel = artifacts.require("@hyperledger-labs/yui-ibc-solidity/Channel");
 const IBCChannelHandshake = artifacts.require("@hyperledger-labs/yui-ibc-solidity/IBCChannelHandshake");
 const IBCPacket = artifacts.require("@hyperledger-labs/yui-ibc-solidity/IBCPacket");
 const IBCHandler = artifacts.require("@hyperledger-labs/yui-ibc-solidity/OwnableIBCHandler");
-const IBCMsgs = artifacts.require("@hyperledger-labs/yui-ibc-solidity/IBCMsgs");
 const MockClient = artifacts.require("@hyperledger-labs/yui-ibc-solidity/MockClient");
 
 const PortTransfer = "transfer"
 const MockClientType = "mock-client"
 
 const deployCore = async (deployer) => {
-  await deployer.deploy(IBCMsgs);
-  await deployer.deploy(IBCChannel);
-
   await deployer.deploy(IBCClient);
   await deployer.deploy(IBCConnection);
   await deployer.deploy(IBCChannelHandshake);
