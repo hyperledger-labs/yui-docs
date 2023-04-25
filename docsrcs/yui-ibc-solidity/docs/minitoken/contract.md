@@ -6,7 +6,7 @@ sidebar_position: 3
 
 We will implement a token that can be transferred between two ledgers using IBC.
 
-There is a token transfer standard called [ICS-20](https://github.com/cosmos/ibc/tree/master/spec/app/ics-020-fungible-token-transfer),
+There is a token transfer standard called [ICS-20](https://github.com/cosmos/ibc/tree/main/spec/app/ics-020-fungible-token-transfer),
 but we do not support the standard here.
 
 While ICS-20 uses denomination to distinguish the source ledger,
@@ -114,7 +114,7 @@ Based on the above functions, we will implement the necessary processes for IBC.
 
 Define an IBC Packet to be used for communication between ledgers.
 
-If you want to know more about Packet, please refer to [ICS 004](https://github.com/cosmos/ibc/tree/master/spec/core/ics-004-channel-and-packet-semantics)
+If you want to know more about Packet, please refer to [ICS 004](https://github.com/cosmos/ibc/tree/main/spec/core/ics-004-channel-and-packet-semantics)
 for more information.
 
 MiniTokenPacketData holds the information necessary to transfer a MiniToken from the source ledger to the destination ledger.
@@ -138,24 +138,22 @@ Once you have defined the Packet
 Use [solidity-protobuf](https://github.com/datachainlab/solidity-protobuf) to generate the sol file.
 
 First, get solidity-protobuf and install the necessary modules.
+For details on the revision specified by yui-ibc-solidity, please refer to the following:
+
+https://github.com/hyperledger-labs/yui-ibc-solidity/tree/v0.3.1#for-developers
 
 ```sh
 git clone https://github.com/datachainlab/solidity-protobuf.git
 cd solidity-protobuf
+git checkout fce34ce0240429221105986617f64d8d4261d87d
 pip install -r requirements.txt
-```
-
-Set this folder to the SOLPB_DIR environment variable.
-
-```sh
-export SOLPB_DIR=<solidity-protobuf dir>
 ```
 
 Then, on the working directory of the tutorial, generate the sol file.
 
 ```sh
 cd <tutorial dir>
-make proto
+make SOLPB_DIR=/path/to/solidity-protobuf proto-sol
 ```
 
 ### Modify constructor
@@ -170,7 +168,6 @@ IBCHandler ibcHandler;
 
 constructor(IBCHandler ibcHandler_) {
     owner = msg.sender;
-
     ibcHandler = ibcHandler_;
 }
 ```
@@ -228,7 +225,7 @@ function _sendPacket(MiniTokenPacketData.Data memory data, string memory sourceP
 ### IIBCModule
 
 When the IBC Module receives a Channel handshake or a Packet, it needs to be called back to MiniToken.
-The following interfaces are defined in yui-ibc-solidity.
+We will implement [IIBCModule](https://github.com/hyperledger-labs/yui-ibc-solidity/blob/v0.3.1/contracts/core/05-port/IIBCModule.sol) interface defined in yui-ibc-solidity.
 
 ```solidity
 interface IIBCModule {
@@ -281,7 +278,7 @@ In this case, we will not handle them specifically.
 
 If you want to know more about Channel life cycle in IBC, please refer to the following:
 
-https://github.com/cosmos/ibc/blob/ad99cb444ece8becae59f995b3371dc1ffc3ec5b/spec/core/ics-004-channel-and-packet-semantics/README.md#channel-lifecycle-management
+https://github.com/cosmos/ibc/blob/main/spec/core/ics-004-channel-and-packet-semantics/README.md
 
 #### onRecvPacket
 
@@ -320,7 +317,7 @@ The token implemented here is different from ICS-20.
 
 For an example of ICS-20 implementation, please refer to the following:
 
-https://github.com/hyperledger-labs/yui-ibc-solidity/tree/main/contracts/apps
+https://github.com/hyperledger-labs/yui-ibc-solidity/tree/v0.3.1/contracts/apps
 
 ### Distinction between currency units
 

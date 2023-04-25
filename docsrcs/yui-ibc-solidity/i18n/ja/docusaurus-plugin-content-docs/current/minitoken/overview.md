@@ -7,6 +7,9 @@ sidebar_position: 1
 このチュートリアルでは、
 [yui-ibc-solidity](https://github.com/hyperledger-labs/yui-ibc-solidity)
 を用いて、初めてのIBCアプリケーションを構築するプロセスを紹介します。
+チュートリアル執筆時点では
+[v0.3.1](https://github.com/hyperledger-labs/yui-ibc-solidity/tree/v0.3.1)
+を用いています。
 
 IBCを使って2つの台帳間でトークンを転送できるスマートコントラクトを作成します。
 

@@ -6,7 +6,7 @@ sidebar_position: 3
 
 IBCを用いて2台帳間で転送できるトークンを実装していきます。
 
-[ICS-20](https://github.com/cosmos/ibc/tree/master/spec/app/ics-020-fungible-token-transfer)
+[ICS-20](https://github.com/cosmos/ibc/tree/main/spec/app/ics-020-fungible-token-transfer)
 というトークン転送規格がありますが、ここではサポートしません。
 
 ICS-20ではトークンの発行元をdenominationを用いて区別しますが、今回実装するMiniTokenでは発行元の台帳を区別せずに扱います。
@@ -114,7 +114,7 @@ function balanceOf(address account) external view returns (uint256) {
 台帳間のコミュニケーションに用いるIBC Packetを定義します。
 
 Packetに関して詳しく知りたい方は
-[ICS 004](https://github.com/cosmos/ibc/tree/master/spec/core/ics-004-channel-and-packet-semantics)
+[ICS 004](https://github.com/cosmos/ibc/tree/main/spec/core/ics-004-channel-and-packet-semantics)
 を参照してください。
 
 MiniTokenPacketDataは、MiniTokenを転送元台帳から転送先台帳に対して転送するのに必要な情報を保持します。
@@ -138,24 +138,22 @@ Packetを定義したら
 [solidity-protobuf](https://github.com/datachainlab/solidity-protobuf)を用いてsolファイルを生成します。
 
 まず、solidity-protobufを取得し、必要なモジュールをインストールします。
+yui-ibc-solidityが指定するrevisionについての詳細は以下を参照ください。
+
+https://github.com/hyperledger-labs/yui-ibc-solidity/tree/v0.3.1#for-developers
 
 ```sh
 git clone https://github.com/datachainlab/solidity-protobuf.git
 cd solidity-protobuf
+git checkout fce34ce0240429221105986617f64d8d4261d87d
 pip install -r requirements.txt
-```
-
-このフォルダをSOLPB_DIR環境変数にセットします。
-
-```sh
-export SOLPB_DIR=<solidity-protobuf dir>
 ```
 
 続いて、作業ディレクトリ側で、solファイルを生成します。
 
 ```sh
 cd <tutorial dir>
-make proto
+make SOLPB_DIR=/path/to/solidity-protobuf proto-sol
 ```
 
 ### constructor改修
@@ -170,7 +168,6 @@ IBCHandler ibcHandler;
 
 constructor(IBCHandler ibcHandler_) {
     owner = msg.sender;
-
     ibcHandler = ibcHandler_;
 }
 ```
@@ -227,9 +224,8 @@ function _sendPacket(MiniTokenPacketData.Data memory data, string memory sourceP
 ### IIBCModule
 
 IBC ModuleでのChannelハンドシェイクやPacketを受信した際などに、MiniTokenへコールバックしてもらう必要があります。
-yui-ibc-solidityで定義される以下のインタフェースを実装していきます。
+yui-ibc-solidityで定義される[IIBCModule](https://github.com/hyperledger-labs/yui-ibc-solidity/blob/v0.3.1/contracts/core/05-port/IIBCModule.sol)インタフェースを実装していきます。
 
-```sol
 ```solidity
 interface IIBCModule {
     function onChanOpenInit(
@@ -279,7 +275,8 @@ interface IIBCModule {
 - onChanCloseConfirm
 
 IBCにおけるChannelのライフサイクルについて詳しく知りたい方は、以下を参照ください。
-https://github.com/cosmos/ibc/blob/ad99cb444ece8becae59f995b3371dc1ffc3ec5b/spec/core/ics-004-channel-and-packet-semantics/README.md#channel-lifecycle-management
+
+https://github.com/cosmos/ibc/blob/main/spec/core/ics-004-channel-and-packet-semantics/README.md
 
 #### onRecvPacket
 
@@ -319,7 +316,7 @@ function onAcknowledgementPacket(Packet.Data calldata packet, bytes calldata ack
 
 尚、ICS-20の実装例としては以下を参照ください。
 
-https://github.com/hyperledger-labs/yui-ibc-solidity/tree/main/contracts/apps
+https://github.com/hyperledger-labs/yui-ibc-solidity/tree/v0.3.1/contracts/apps
 
 ### 通貨単位の区別
 
