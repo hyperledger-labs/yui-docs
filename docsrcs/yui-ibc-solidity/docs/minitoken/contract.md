@@ -34,7 +34,7 @@ In this example, we simply use the account that generated the contract as the ow
 ```solidity title="contracts/app/MiniToken.sol"
 address private owner;
 
-constructor() public {
+constructor() {
     owner = msg.sender;
 }
 ```
@@ -164,16 +164,13 @@ As a contract of the IBC/TAO layer defined by yui-ibc-solidity, the following ca
 The TAO layer represents "transport, authentication, & ordering" and handles core IBC functions independent of the application logic.
 
 - IBCHandler
-- IBCHost
 
 ```solidity
 IBCHandler ibcHandler;
-IBCHost ibcHost;
 
-constructor(IBCHost host_, IBCHandler ibcHandler_) public {
+constructor(IBCHandler ibcHandler_) {
     owner = msg.sender;
 
-    ibcHost = host_;
     ibcHandler = ibcHandler_;
 }
 ```
@@ -212,15 +209,11 @@ The next step is to implement the Packet registration process `_sendPacket`.
 By calling `IBCHandler.sendPacket`, the packet to be sent will be registered.
 
 ```solidity
-// These two variables can be passed when initializing Token contract.
-//IBCHandler ibcHandler;
-//IBCHost ibcHost;
-
 function _sendPacket(MiniTokenPacketData.Data memory data, string memory sourcePort, string memory sourceChannel, uint64 timeoutHeight) virtual internal {
-    (Channel.Data memory channel, bool found) = ibcHost.getChannel(sourcePort, sourceChannel);
+    (Channel.Data memory channel, bool found) = ibcHandler.getChannel(sourcePort, sourceChannel);
     require(found, "channel not found");
     ibcHandler.sendPacket(Packet.Data({
-        sequence: ibcHost.getNextSequenceSend(sourcePort, sourceChannel),
+        sequence: ibcHandler.getNextSequenceSend(sourcePort, sourceChannel),
         source_port: sourcePort,
         source_channel: sourceChannel,
         destination_port: channel.counterparty.port_id,
@@ -232,22 +225,43 @@ function _sendPacket(MiniTokenPacketData.Data memory data, string memory sourceP
 }
 ```
 
-### IModuleCallbacks
+### IIBCModule
 
 When the IBC Module receives a Channel handshake or a Packet, it needs to be called back to MiniToken.
 The following interfaces are defined in yui-ibc-solidity.
 
 ```solidity
-interface IModuleCallbacks {
-    function onChanOpenInit(Channel.Order, string[] calldata connectionHops, string calldata portId, string calldata channelId, ChannelCounterparty.Data calldata counterparty, string calldata version) external;
-    function onChanOpenTry(Channel.Order, string[] calldata connectionHops, string calldata portId, string calldata channelId, ChannelCounterparty.Data calldata counterparty, string calldata version, string calldata counterpartyVersion) external;
+interface IIBCModule {
+    function onChanOpenInit(
+        Channel.Order,
+        string[] calldata connectionHops,
+        string calldata portId,
+        string calldata channelId,
+        ChannelCounterparty.Data calldata counterparty,
+        string calldata version
+    ) external;
+
+    function onChanOpenTry(
+        Channel.Order,
+        string[] calldata connectionHops,
+        string calldata portId,
+        string calldata channelId,
+        ChannelCounterparty.Data calldata counterparty,
+        string calldata version,
+        string calldata counterpartyVersion
+    ) external;
+
     function onChanOpenAck(string calldata portId, string calldata channelId, string calldata counterpartyVersion) external;
+
     function onChanOpenConfirm(string calldata portId, string calldata channelId) external;
+
     function onChanCloseInit(string calldata portId, string calldata channelId) external;
+
     function onChanCloseConfirm(string calldata portId, string calldata channelId) external;
 
-    function onRecvPacket(Packet.Data calldata) external returns(bytes memory);
-    function onAcknowledgementPacket(Packet.Data calldata, bytes calldata acknowledgement) external;
+    function onRecvPacket(Packet.Data calldata, address relayer) external returns (bytes memory);
+
+    function onAcknowledgementPacket(Packet.Data calldata, bytes calldata acknowledgement, address relayer) external;
 }
 ```
 
@@ -278,7 +292,7 @@ This function is called when a MiniTokenPacketData is received in the token tran
 It returns the success or failure of the process as an Acknowledgement.
 
 ```solidity
-function onRecvPacket(Packet.Data calldata packet) onlyIBC external virtual override returns (bytes memory acknowledgement) {
+function onRecvPacket(Packet.Data calldata packet, address relayer) onlyIBC external virtual override returns (bytes memory acknowledgement) {
     MiniTokenPacketData.Data memory data = MiniTokenPacketData.decode(packet.data);
     return _newAcknowledgement(
         _mint(data.receiver.toAddress(), data.amount)
@@ -293,7 +307,7 @@ Redeems the token against the originating account if the transaction fails at th
 This function is called when an Acknowledgement is received in the token transfer source ledger.
 
 ```solidity
-function onAcknowledgementPacket(Packet.Data calldata packet, bytes calldata acknowledgement) onlyIBC external virtual override {
+function onAcknowledgementPacket(Packet.Data calldata packet, bytes calldata acknowledgement, address relayer) onlyIBC external virtual override {
     if (!_isSuccessAcknowledgement(acknowledgement)) {
         _refundTokens(MiniTokenPacketData.decode(packet.data));
     }

@@ -34,7 +34,7 @@ ICS-20ではトークンの発行元をdenominationを用いて区別します�
 ```solidity title="contracts/app/MiniToken.sol"
 address private owner;
 
-constructor() public {
+constructor() {
     owner = msg.sender;
 }
 ```
@@ -164,16 +164,13 @@ yui-ibc-solidityの定義するIBC/TAO層のコントラクトとして、以下
 なお、TAO層は、"transport, authentication, & ordering"を表し、アプリケーションロジックに依存しないIBCのコア機能を扱っています。
 
 - IBCHandler
-- IBCHost
 
 ```solidity
 IBCHandler ibcHandler;
-IBCHost ibcHost;
 
-constructor(IBCHost host_, IBCHandler ibcHandler_) public {
+constructor(IBCHandler ibcHandler_) {
     owner = msg.sender;
 
-    ibcHost = host_;
     ibcHandler = ibcHandler_;
 }
 ```
@@ -211,15 +208,11 @@ function sendTransfer(
 `IBCHandler.sendPacket`を呼び出すことで、送信すべきPacketが登録されます。
 
 ```solidity
-// These two variables can be passed when initializing Token contract.
-//IBCHandler ibcHandler;
-//IBCHost ibcHost;
-
 function _sendPacket(MiniTokenPacketData.Data memory data, string memory sourcePort, string memory sourceChannel, uint64 timeoutHeight) virtual internal {
-    (Channel.Data memory channel, bool found) = ibcHost.getChannel(sourcePort, sourceChannel);
+    (Channel.Data memory channel, bool found) = ibcHandler.getChannel(sourcePort, sourceChannel);
     require(found, "channel not found");
     ibcHandler.sendPacket(Packet.Data({
-        sequence: ibcHost.getNextSequenceSend(sourcePort, sourceChannel),
+        sequence: ibcHandler.getNextSequenceSend(sourcePort, sourceChannel),
         source_port: sourcePort,
         source_channel: sourceChannel,
         destination_port: channel.counterparty.port_id,
@@ -231,22 +224,44 @@ function _sendPacket(MiniTokenPacketData.Data memory data, string memory sourceP
 }
 ```
 
-### IModuleCallbacks
+### IIBCModule
 
 IBC ModuleでのChannelハンドシェイクやPacketを受信した際などに、MiniTokenへコールバックしてもらう必要があります。
 yui-ibc-solidityで定義される以下のインタフェースを実装していきます。
 
 ```sol
-interface IModuleCallbacks {
-    function onChanOpenInit(Channel.Order, string[] calldata connectionHops, string calldata portId, string calldata channelId, ChannelCounterparty.Data calldata counterparty, string calldata version) external;
-    function onChanOpenTry(Channel.Order, string[] calldata connectionHops, string calldata portId, string calldata channelId, ChannelCounterparty.Data calldata counterparty, string calldata version, string calldata counterpartyVersion) external;
+```solidity
+interface IIBCModule {
+    function onChanOpenInit(
+        Channel.Order,
+        string[] calldata connectionHops,
+        string calldata portId,
+        string calldata channelId,
+        ChannelCounterparty.Data calldata counterparty,
+        string calldata version
+    ) external;
+
+    function onChanOpenTry(
+        Channel.Order,
+        string[] calldata connectionHops,
+        string calldata portId,
+        string calldata channelId,
+        ChannelCounterparty.Data calldata counterparty,
+        string calldata version,
+        string calldata counterpartyVersion
+    ) external;
+
     function onChanOpenAck(string calldata portId, string calldata channelId, string calldata counterpartyVersion) external;
+
     function onChanOpenConfirm(string calldata portId, string calldata channelId) external;
+
     function onChanCloseInit(string calldata portId, string calldata channelId) external;
+
     function onChanCloseConfirm(string calldata portId, string calldata channelId) external;
 
-    function onRecvPacket(Packet.Data calldata) external returns(bytes memory);
-    function onAcknowledgementPacket(Packet.Data calldata, bytes calldata acknowledgement) external;
+    function onRecvPacket(Packet.Data calldata, address relayer) external returns (bytes memory);
+
+    function onAcknowledgementPacket(Packet.Data calldata, bytes calldata acknowledgement, address relayer) external;
 }
 ```
 
@@ -275,7 +290,7 @@ Packetの内容に合わせて、指定された送金先アカウントに対�
 処理の成否をAcknowledgementとして返します。
 
 ```solidity
-function onRecvPacket(Packet.Data calldata packet) onlyIBC external virtual override returns (bytes memory acknowledgement) {
+function onRecvPacket(Packet.Data calldata packet, address relayer) onlyIBC external virtual override returns (bytes memory acknowledgement) {
     MiniTokenPacketData.Data memory data = MiniTokenPacketData.decode(packet.data);
     return _newAcknowledgement(
         _mint(data.receiver.toAddress(), data.amount)
@@ -291,7 +306,7 @@ function onRecvPacket(Packet.Data calldata packet) onlyIBC external virtual over
 
 
 ```solidity
-function onAcknowledgementPacket(Packet.Data calldata packet, bytes calldata acknowledgement) onlyIBC external virtual override {
+function onAcknowledgementPacket(Packet.Data calldata packet, bytes calldata acknowledgement, address relayer) onlyIBC external virtual override {
     if (!_isSuccessAcknowledgement(acknowledgement)) {
         _refundTokens(MiniTokenPacketData.decode(packet.data));
     }
