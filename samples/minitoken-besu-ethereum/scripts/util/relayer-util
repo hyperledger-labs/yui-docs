@@ -6,7 +6,6 @@ source ${SCRIPT_DIR}/util/color
 
 CONF_DIR=${SCRIPT_DIR}/../configs
 DEMO_DIR=${SCRIPT_DIR}/../demo
-FIXTURES_DIR=${DEMO_DIR}/fixtures
 BIN_DIR=${SCRIPT_DIR}/../build
 
 RELAYER_CONF="${DEMO_DIR}/.urelayer"
@@ -16,6 +15,5 @@ println "Loaded relayer command: $RLY"
 
 CHAINID_ONE=ibc0
 CHAINID_TWO=ibc1
-RLYKEY=testkey
 PATH_NAME=ibc01
 

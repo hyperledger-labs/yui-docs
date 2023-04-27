@@ -5,7 +5,6 @@ set -eu
 SCRIPT_DIR=$(cd $(dirname ${BASH_SOURCE:-$0}); pwd)
 source ${SCRIPT_DIR}/util/relayer-util
 
-rm -rf ${FIXTURES_DIR}
 rm -rf ${RELAYER_CONF} &> /dev/null
 
 ${RLY} config init

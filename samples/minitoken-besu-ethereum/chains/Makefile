@@ -5,7 +5,7 @@ build:
 	${DOCKER_COMPOSE} build --no-cache
 
 network:
-	${DOCKER_COMPOSE} up -d ibc0 ibc1
+	${DOCKER_COMPOSE} up -d
 
 network-down:
 	${DOCKER_COMPOSE} down -v --remove-orphans
