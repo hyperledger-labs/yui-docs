@@ -22,4 +22,4 @@ The generated files are included in the source code.
 
 - python
 - pip
-- protobuf
+- protoc (protobuf compiler)

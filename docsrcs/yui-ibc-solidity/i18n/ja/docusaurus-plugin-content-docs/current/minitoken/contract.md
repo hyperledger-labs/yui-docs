@@ -140,7 +140,7 @@ Packetを定義したら
 まず、solidity-protobufを取得し、必要なモジュールをインストールします。
 yui-ibc-solidityが指定するrevisionについての詳細は以下を参照ください。
 
-https://github.com/hyperledger-labs/yui-ibc-solidity/tree/v0.3.1#for-developers
+https://github.com/hyperledger-labs/yui-ibc-solidity/tree/v0.3.3#for-developers
 
 ```sh
 git clone https://github.com/datachainlab/solidity-protobuf.git
@@ -224,7 +224,7 @@ function _sendPacket(MiniTokenPacketData.Data memory data, string memory sourceP
 ### IIBCModule
 
 IBC ModuleでのChannelハンドシェイクやPacketを受信した際などに、MiniTokenへコールバックしてもらう必要があります。
-yui-ibc-solidityで定義される[IIBCModule](https://github.com/hyperledger-labs/yui-ibc-solidity/blob/v0.3.1/contracts/core/05-port/IIBCModule.sol)インタフェースを実装していきます。
+yui-ibc-solidityで定義される[IIBCModule](https://github.com/hyperledger-labs/yui-ibc-solidity/blob/v0.3.3/contracts/core/05-port/IIBCModule.sol)インタフェースを実装していきます。
 
 ```solidity
 interface IIBCModule {
@@ -316,7 +316,7 @@ function onAcknowledgementPacket(Packet.Data calldata packet, bytes calldata ack
 
 尚、ICS-20の実装例としては以下を参照ください。
 
-https://github.com/hyperledger-labs/yui-ibc-solidity/tree/v0.3.1/contracts/apps
+https://github.com/hyperledger-labs/yui-ibc-solidity/tree/v0.3.3/contracts/apps
 
 ### 通貨単位の区別
 
