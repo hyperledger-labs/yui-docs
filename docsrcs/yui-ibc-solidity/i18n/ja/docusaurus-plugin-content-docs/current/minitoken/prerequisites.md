@@ -22,4 +22,4 @@ Packetを定義したprotoファイルからsolファイルを生成する場合
 
 - python
 - pip
-- protobuf
+- protoc (protobuf compiler)

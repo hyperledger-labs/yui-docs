@@ -6,7 +6,7 @@ sidebar_position: 3
 
 IBCを用いて2台帳間で転送できるトークンを実装していきます。
 
-[ICS-20](https://github.com/cosmos/ibc/tree/master/spec/app/ics-020-fungible-token-transfer)
+[ICS-20](https://github.com/cosmos/ibc/tree/main/spec/app/ics-020-fungible-token-transfer)
 というトークン転送規格がありますが、ここではサポートしません。
 
 ICS-20ではトークンの発行元をdenominationを用いて区別しますが、今回実装するMiniTokenでは発行元の台帳を区別せずに扱います。
@@ -34,7 +34,7 @@ ICS-20ではトークンの発行元をdenominationを用いて区別します�
 ```solidity title="contracts/app/MiniToken.sol"
 address private owner;
 
-constructor() public {
+constructor() {
     owner = msg.sender;
 }
 ```
@@ -114,7 +114,7 @@ function balanceOf(address account) external view returns (uint256) {
 台帳間のコミュニケーションに用いるIBC Packetを定義します。
 
 Packetに関して詳しく知りたい方は
-[ICS 004](https://github.com/cosmos/ibc/tree/master/spec/core/ics-004-channel-and-packet-semantics)
+[ICS 004](https://github.com/cosmos/ibc/tree/main/spec/core/ics-004-channel-and-packet-semantics)
 を参照してください。
 
 MiniTokenPacketDataは、MiniTokenを転送元台帳から転送先台帳に対して転送するのに必要な情報を保持します。
@@ -138,24 +138,22 @@ Packetを定義したら
 [solidity-protobuf](https://github.com/datachainlab/solidity-protobuf)を用いてsolファイルを生成します。
 
 まず、solidity-protobufを取得し、必要なモジュールをインストールします。
+yui-ibc-solidityが指定するrevisionについての詳細は以下を参照ください。
+
+https://github.com/hyperledger-labs/yui-ibc-solidity/tree/v0.3.3#for-developers
 
 ```sh
 git clone https://github.com/datachainlab/solidity-protobuf.git
 cd solidity-protobuf
+git checkout fce34ce0240429221105986617f64d8d4261d87d
 pip install -r requirements.txt
-```
-
-このフォルダをSOLPB_DIR環境変数にセットします。
-
-```sh
-export SOLPB_DIR=<solidity-protobuf dir>
 ```
 
 続いて、作業ディレクトリ側で、solファイルを生成します。
 
 ```sh
 cd <tutorial dir>
-make proto
+make SOLPB_DIR=/path/to/solidity-protobuf proto-sol
 ```
 
 ### constructor改修
@@ -164,16 +162,12 @@ yui-ibc-solidityの定義するIBC/TAO層のコントラクトとして、以下
 なお、TAO層は、"transport, authentication, & ordering"を表し、アプリケーションロジックに依存しないIBCのコア機能を扱っています。
 
 - IBCHandler
-- IBCHost
 
 ```solidity
 IBCHandler ibcHandler;
-IBCHost ibcHost;
 
-constructor(IBCHost host_, IBCHandler ibcHandler_) public {
+constructor(IBCHandler ibcHandler_) {
     owner = msg.sender;
-
-    ibcHost = host_;
     ibcHandler = ibcHandler_;
 }
 ```
@@ -211,15 +205,11 @@ function sendTransfer(
 `IBCHandler.sendPacket`を呼び出すことで、送信すべきPacketが登録されます。
 
 ```solidity
-// These two variables can be passed when initializing Token contract.
-//IBCHandler ibcHandler;
-//IBCHost ibcHost;
-
 function _sendPacket(MiniTokenPacketData.Data memory data, string memory sourcePort, string memory sourceChannel, uint64 timeoutHeight) virtual internal {
-    (Channel.Data memory channel, bool found) = ibcHost.getChannel(sourcePort, sourceChannel);
+    (Channel.Data memory channel, bool found) = ibcHandler.getChannel(sourcePort, sourceChannel);
     require(found, "channel not found");
     ibcHandler.sendPacket(Packet.Data({
-        sequence: ibcHost.getNextSequenceSend(sourcePort, sourceChannel),
+        sequence: ibcHandler.getNextSequenceSend(sourcePort, sourceChannel),
         source_port: sourcePort,
         source_channel: sourceChannel,
         destination_port: channel.counterparty.port_id,
@@ -231,22 +221,43 @@ function _sendPacket(MiniTokenPacketData.Data memory data, string memory sourceP
 }
 ```
 
-### IModuleCallbacks
+### IIBCModule
 
 IBC ModuleでのChannelハンドシェイクやPacketを受信した際などに、MiniTokenへコールバックしてもらう必要があります。
-yui-ibc-solidityで定義される以下のインタフェースを実装していきます。
+yui-ibc-solidityで定義される[IIBCModule](https://github.com/hyperledger-labs/yui-ibc-solidity/blob/v0.3.3/contracts/core/05-port/IIBCModule.sol)インタフェースを実装していきます。
 
-```sol
-interface IModuleCallbacks {
-    function onChanOpenInit(Channel.Order, string[] calldata connectionHops, string calldata portId, string calldata channelId, ChannelCounterparty.Data calldata counterparty, string calldata version) external;
-    function onChanOpenTry(Channel.Order, string[] calldata connectionHops, string calldata portId, string calldata channelId, ChannelCounterparty.Data calldata counterparty, string calldata version, string calldata counterpartyVersion) external;
+```solidity
+interface IIBCModule {
+    function onChanOpenInit(
+        Channel.Order,
+        string[] calldata connectionHops,
+        string calldata portId,
+        string calldata channelId,
+        ChannelCounterparty.Data calldata counterparty,
+        string calldata version
+    ) external;
+
+    function onChanOpenTry(
+        Channel.Order,
+        string[] calldata connectionHops,
+        string calldata portId,
+        string calldata channelId,
+        ChannelCounterparty.Data calldata counterparty,
+        string calldata version,
+        string calldata counterpartyVersion
+    ) external;
+
     function onChanOpenAck(string calldata portId, string calldata channelId, string calldata counterpartyVersion) external;
+
     function onChanOpenConfirm(string calldata portId, string calldata channelId) external;
+
     function onChanCloseInit(string calldata portId, string calldata channelId) external;
+
     function onChanCloseConfirm(string calldata portId, string calldata channelId) external;
 
-    function onRecvPacket(Packet.Data calldata) external returns(bytes memory);
-    function onAcknowledgementPacket(Packet.Data calldata, bytes calldata acknowledgement) external;
+    function onRecvPacket(Packet.Data calldata, address relayer) external returns (bytes memory);
+
+    function onAcknowledgementPacket(Packet.Data calldata, bytes calldata acknowledgement, address relayer) external;
 }
 ```
 
@@ -264,7 +275,8 @@ interface IModuleCallbacks {
 - onChanCloseConfirm
 
 IBCにおけるChannelのライフサイクルについて詳しく知りたい方は、以下を参照ください。
-https://github.com/cosmos/ibc/blob/ad99cb444ece8becae59f995b3371dc1ffc3ec5b/spec/core/ics-004-channel-and-packet-semantics/README.md#channel-lifecycle-management
+
+https://github.com/cosmos/ibc/blob/main/spec/core/ics-004-channel-and-packet-semantics/README.md
 
 #### onRecvPacket
 
@@ -275,7 +287,7 @@ Packetの内容に合わせて、指定された送金先アカウントに対�
 処理の成否をAcknowledgementとして返します。
 
 ```solidity
-function onRecvPacket(Packet.Data calldata packet) onlyIBC external virtual override returns (bytes memory acknowledgement) {
+function onRecvPacket(Packet.Data calldata packet, address relayer) onlyIBC external virtual override returns (bytes memory acknowledgement) {
     MiniTokenPacketData.Data memory data = MiniTokenPacketData.decode(packet.data);
     return _newAcknowledgement(
         _mint(data.receiver.toAddress(), data.amount)
@@ -291,7 +303,7 @@ function onRecvPacket(Packet.Data calldata packet) onlyIBC external virtual over
 
 
 ```solidity
-function onAcknowledgementPacket(Packet.Data calldata packet, bytes calldata acknowledgement) onlyIBC external virtual override {
+function onAcknowledgementPacket(Packet.Data calldata packet, bytes calldata acknowledgement, address relayer) onlyIBC external virtual override {
     if (!_isSuccessAcknowledgement(acknowledgement)) {
         _refundTokens(MiniTokenPacketData.decode(packet.data));
     }
@@ -304,7 +316,7 @@ function onAcknowledgementPacket(Packet.Data calldata packet, bytes calldata ack
 
 尚、ICS-20の実装例としては以下を参照ください。
 
-https://github.com/hyperledger-labs/yui-ibc-solidity/tree/main/contracts/apps
+https://github.com/hyperledger-labs/yui-ibc-solidity/tree/v0.3.3/contracts/apps
 
 ### 通貨単位の区別
 

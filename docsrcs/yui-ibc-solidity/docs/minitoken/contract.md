@@ -6,7 +6,7 @@ sidebar_position: 3
 
 We will implement a token that can be transferred between two ledgers using IBC.
 
-There is a token transfer standard called [ICS-20](https://github.com/cosmos/ibc/tree/master/spec/app/ics-020-fungible-token-transfer),
+There is a token transfer standard called [ICS-20](https://github.com/cosmos/ibc/tree/main/spec/app/ics-020-fungible-token-transfer),
 but we do not support the standard here.
 
 While ICS-20 uses denomination to distinguish the source ledger,
@@ -34,7 +34,7 @@ In this example, we simply use the account that generated the contract as the ow
 ```solidity title="contracts/app/MiniToken.sol"
 address private owner;
 
-constructor() public {
+constructor() {
     owner = msg.sender;
 }
 ```
@@ -114,7 +114,7 @@ Based on the above functions, we will implement the necessary processes for IBC.
 
 Define an IBC Packet to be used for communication between ledgers.
 
-If you want to know more about Packet, please refer to [ICS 004](https://github.com/cosmos/ibc/tree/master/spec/core/ics-004-channel-and-packet-semantics)
+If you want to know more about Packet, please refer to [ICS 004](https://github.com/cosmos/ibc/tree/main/spec/core/ics-004-channel-and-packet-semantics)
 for more information.
 
 MiniTokenPacketData holds the information necessary to transfer a MiniToken from the source ledger to the destination ledger.
@@ -138,24 +138,22 @@ Once you have defined the Packet
 Use [solidity-protobuf](https://github.com/datachainlab/solidity-protobuf) to generate the sol file.
 
 First, get solidity-protobuf and install the necessary modules.
+For details on the revision specified by yui-ibc-solidity, please refer to the following:
+
+https://github.com/hyperledger-labs/yui-ibc-solidity/tree/v0.3.3#for-developers
 
 ```sh
 git clone https://github.com/datachainlab/solidity-protobuf.git
 cd solidity-protobuf
+git checkout fce34ce0240429221105986617f64d8d4261d87d
 pip install -r requirements.txt
-```
-
-Set this folder to the SOLPB_DIR environment variable.
-
-```sh
-export SOLPB_DIR=<solidity-protobuf dir>
 ```
 
 Then, on the working directory of the tutorial, generate the sol file.
 
 ```sh
 cd <tutorial dir>
-make proto
+make SOLPB_DIR=/path/to/solidity-protobuf proto-sol
 ```
 
 ### Modify constructor
@@ -164,16 +162,12 @@ As a contract of the IBC/TAO layer defined by yui-ibc-solidity, the following ca
 The TAO layer represents "transport, authentication, & ordering" and handles core IBC functions independent of the application logic.
 
 - IBCHandler
-- IBCHost
 
 ```solidity
 IBCHandler ibcHandler;
-IBCHost ibcHost;
 
-constructor(IBCHost host_, IBCHandler ibcHandler_) public {
+constructor(IBCHandler ibcHandler_) {
     owner = msg.sender;
-
-    ibcHost = host_;
     ibcHandler = ibcHandler_;
 }
 ```
@@ -212,15 +206,11 @@ The next step is to implement the Packet registration process `_sendPacket`.
 By calling `IBCHandler.sendPacket`, the packet to be sent will be registered.
 
 ```solidity
-// These two variables can be passed when initializing Token contract.
-//IBCHandler ibcHandler;
-//IBCHost ibcHost;
-
 function _sendPacket(MiniTokenPacketData.Data memory data, string memory sourcePort, string memory sourceChannel, uint64 timeoutHeight) virtual internal {
-    (Channel.Data memory channel, bool found) = ibcHost.getChannel(sourcePort, sourceChannel);
+    (Channel.Data memory channel, bool found) = ibcHandler.getChannel(sourcePort, sourceChannel);
     require(found, "channel not found");
     ibcHandler.sendPacket(Packet.Data({
-        sequence: ibcHost.getNextSequenceSend(sourcePort, sourceChannel),
+        sequence: ibcHandler.getNextSequenceSend(sourcePort, sourceChannel),
         source_port: sourcePort,
         source_channel: sourceChannel,
         destination_port: channel.counterparty.port_id,
@@ -232,22 +222,43 @@ function _sendPacket(MiniTokenPacketData.Data memory data, string memory sourceP
 }
 ```
 
-### IModuleCallbacks
+### IIBCModule
 
 When the IBC Module receives a Channel handshake or a Packet, it needs to be called back to MiniToken.
-The following interfaces are defined in yui-ibc-solidity.
+We will implement [IIBCModule](https://github.com/hyperledger-labs/yui-ibc-solidity/blob/v0.3.3/contracts/core/05-port/IIBCModule.sol) interface defined in yui-ibc-solidity.
 
 ```solidity
-interface IModuleCallbacks {
-    function onChanOpenInit(Channel.Order, string[] calldata connectionHops, string calldata portId, string calldata channelId, ChannelCounterparty.Data calldata counterparty, string calldata version) external;
-    function onChanOpenTry(Channel.Order, string[] calldata connectionHops, string calldata portId, string calldata channelId, ChannelCounterparty.Data calldata counterparty, string calldata version, string calldata counterpartyVersion) external;
+interface IIBCModule {
+    function onChanOpenInit(
+        Channel.Order,
+        string[] calldata connectionHops,
+        string calldata portId,
+        string calldata channelId,
+        ChannelCounterparty.Data calldata counterparty,
+        string calldata version
+    ) external;
+
+    function onChanOpenTry(
+        Channel.Order,
+        string[] calldata connectionHops,
+        string calldata portId,
+        string calldata channelId,
+        ChannelCounterparty.Data calldata counterparty,
+        string calldata version,
+        string calldata counterpartyVersion
+    ) external;
+
     function onChanOpenAck(string calldata portId, string calldata channelId, string calldata counterpartyVersion) external;
+
     function onChanOpenConfirm(string calldata portId, string calldata channelId) external;
+
     function onChanCloseInit(string calldata portId, string calldata channelId) external;
+
     function onChanCloseConfirm(string calldata portId, string calldata channelId) external;
 
-    function onRecvPacket(Packet.Data calldata) external returns(bytes memory);
-    function onAcknowledgementPacket(Packet.Data calldata, bytes calldata acknowledgement) external;
+    function onRecvPacket(Packet.Data calldata, address relayer) external returns (bytes memory);
+
+    function onAcknowledgementPacket(Packet.Data calldata, bytes calldata acknowledgement, address relayer) external;
 }
 ```
 
@@ -267,7 +278,7 @@ In this case, we will not handle them specifically.
 
 If you want to know more about Channel life cycle in IBC, please refer to the following:
 
-https://github.com/cosmos/ibc/blob/ad99cb444ece8becae59f995b3371dc1ffc3ec5b/spec/core/ics-004-channel-and-packet-semantics/README.md#channel-lifecycle-management
+https://github.com/cosmos/ibc/blob/main/spec/core/ics-004-channel-and-packet-semantics/README.md
 
 #### onRecvPacket
 
@@ -278,7 +289,7 @@ This function is called when a MiniTokenPacketData is received in the token tran
 It returns the success or failure of the process as an Acknowledgement.
 
 ```solidity
-function onRecvPacket(Packet.Data calldata packet) onlyIBC external virtual override returns (bytes memory acknowledgement) {
+function onRecvPacket(Packet.Data calldata packet, address relayer) onlyIBC external virtual override returns (bytes memory acknowledgement) {
     MiniTokenPacketData.Data memory data = MiniTokenPacketData.decode(packet.data);
     return _newAcknowledgement(
         _mint(data.receiver.toAddress(), data.amount)
@@ -293,7 +304,7 @@ Redeems the token against the originating account if the transaction fails at th
 This function is called when an Acknowledgement is received in the token transfer source ledger.
 
 ```solidity
-function onAcknowledgementPacket(Packet.Data calldata packet, bytes calldata acknowledgement) onlyIBC external virtual override {
+function onAcknowledgementPacket(Packet.Data calldata packet, bytes calldata acknowledgement, address relayer) onlyIBC external virtual override {
     if (!_isSuccessAcknowledgement(acknowledgement)) {
         _refundTokens(MiniTokenPacketData.decode(packet.data));
     }
@@ -306,7 +317,7 @@ The token implemented here is different from ICS-20.
 
 For an example of ICS-20 implementation, please refer to the following:
 
-https://github.com/hyperledger-labs/yui-ibc-solidity/tree/main/contracts/apps
+https://github.com/hyperledger-labs/yui-ibc-solidity/tree/v0.3.3/contracts/apps
 
 ### Distinction between currency units
 
