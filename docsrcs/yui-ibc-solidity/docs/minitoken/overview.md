@@ -8,7 +8,7 @@ This tutorial will take you through building your first IBC application with
 [yui-ibc-solidity](https://github.com/hyperledger-labs/yui-ibc-solidity).
 We will create a smart contract that allows us to transfer tokens between two ledgers using IBC.
 At the time of writing the tutorial, we are using
-[v0.3.3](https://github.com/hyperledger-labs/yui-ibc-solidity/tree/v0.3.3).
+[v0.3.13](https://github.com/hyperledger-labs/yui-ibc-solidity/tree/v0.3.13).
 
 
 You will learn how to
