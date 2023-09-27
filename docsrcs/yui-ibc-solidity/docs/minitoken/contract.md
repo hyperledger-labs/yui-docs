@@ -59,8 +59,7 @@ function _mint(address account, uint256 amount) internal returns (bool) {
 }
 ```
 
-We won't cover the description of modifier implementations such as `onlyOwner`,
-so please refer to the source code if you are interested.
+We won't cover the description of modifier implementations such as `onlyOwner`, so please refer to the source code if you are interested.
 
 ### burn
 
@@ -140,7 +139,7 @@ Use [solidity-protobuf](https://github.com/datachainlab/solidity-protobuf) to ge
 First, get solidity-protobuf and install the necessary modules.
 For details on the revision specified by yui-ibc-solidity, please refer to the following:
 
-https://github.com/hyperledger-labs/yui-ibc-solidity/tree/v0.3.3#for-developers
+https://github.com/hyperledger-labs/yui-ibc-solidity/tree/v0.3.13#for-developers
 
 ```sh
 git clone https://github.com/datachainlab/solidity-protobuf.git
@@ -206,26 +205,30 @@ The next step is to implement the Packet registration process `_sendPacket`.
 By calling `IBCHandler.sendPacket`, the packet to be sent will be registered.
 
 ```solidity
-function _sendPacket(MiniTokenPacketData.Data memory data, string memory sourcePort, string memory sourceChannel, uint64 timeoutHeight) virtual internal {
-    (Channel.Data memory channel, bool found) = ibcHandler.getChannel(sourcePort, sourceChannel);
-    require(found, "channel not found");
-    ibcHandler.sendPacket(Packet.Data({
-        sequence: ibcHandler.getNextSequenceSend(sourcePort, sourceChannel),
-        source_port: sourcePort,
-        source_channel: sourceChannel,
-        destination_port: channel.counterparty.port_id,
-        destination_channel: channel.counterparty.channel_id,
-        data: MiniTokenPacketData.encode(data),
-        timeout_height: Height.Data({revision_number: 0, revision_height: timeoutHeight}),
-        timeout_timestamp: 0
-    }));
+function _sendPacket(
+    MiniTokenPacketData.Data memory data,
+    string memory sourcePort,
+    string memory sourceChannel,
+    uint64 timeoutHeight
+) internal virtual {
+    ibcHandler.sendPacket(
+        sourcePort,
+        sourceChannel,
+        Height.Data({
+            revision_number: 0,
+            revision_height: timeoutHeight
+        }),
+        0,
+        MiniTokenPacketData.encode(data)
+    );
 }
 ```
 
-### IIBCModule
+### IBCAppBase
 
 When the IBC Module receives a Channel handshake or a Packet, it needs to be called back to MiniToken.
-We will implement [IIBCModule](https://github.com/hyperledger-labs/yui-ibc-solidity/blob/v0.3.3/contracts/core/05-port/IIBCModule.sol) interface defined in yui-ibc-solidity.
+It is convenient to inherit from the abstract contract [IBCAppBase](https://github.com/hyperledger-labs/yui-ibc-solidity/blob/v0.3.13/contracts/apps/commons/IBCAppBase.sol) provided by `yui-ibc-solidity`.
+This implements the [IIBCModule](https://github.com/hyperledger-labs/yui-ibc-solidity/blob/v0.3.13/contracts/core/05-port/IIBCModule.sol) interface as shown below.
 
 ```solidity
 interface IIBCModule {
@@ -259,6 +262,8 @@ interface IIBCModule {
     function onRecvPacket(Packet.Data calldata, address relayer) external returns (bytes memory);
 
     function onAcknowledgementPacket(Packet.Data calldata, bytes calldata acknowledgement, address relayer) external;
+
+    function onTimeoutPacket(Packet.Data calldata, address relayer) external;
 }
 ```
 
@@ -266,7 +271,7 @@ Of the above, token-related processing is mainly handled in the following:
 - onRecvPacket
 - onAcknowledgementPacket
 
-If there is any processing that you want to perform when establishing a channel between ledgers, you will need to implement the following processing:
+If there is any processing that you want to perform when establishing a channel between ledgers, you will need to implement the following processing. However, we will not handle them speficically in this tutorial:
 - onChanOpenInit
 - onChanOpenTry
 - onChanOpenAck
@@ -274,9 +279,11 @@ If there is any processing that you want to perform when establishing a channel 
 - onChanCloseInit
 - onChanCloseConfirm
 
-In this case, we will not handle them specifically.
+To handle timeout processes between ledgers, you need to implement the following. However, we will not consider it in this instance:
 
-If you want to know more about Channel life cycle in IBC, please refer to the following:
+- onTimeoutPacket
+
+If you want to know more about the lifecycle of a Channel and timeouts in IBC, please refer to the following:
 
 https://github.com/cosmos/ibc/blob/main/spec/core/ics-004-channel-and-packet-semantics/README.md
 
@@ -317,7 +324,7 @@ The token implemented here is different from ICS-20.
 
 For an example of ICS-20 implementation, please refer to the following:
 
-https://github.com/hyperledger-labs/yui-ibc-solidity/tree/v0.3.3/contracts/apps
+https://github.com/hyperledger-labs/yui-ibc-solidity/tree/v0.3.13/contracts/apps
 
 ### Distinction between currency units
 

@@ -140,7 +140,7 @@ Packetを定義したら
 まず、solidity-protobufを取得し、必要なモジュールをインストールします。
 yui-ibc-solidityが指定するrevisionについての詳細は以下を参照ください。
 
-https://github.com/hyperledger-labs/yui-ibc-solidity/tree/v0.3.3#for-developers
+https://github.com/hyperledger-labs/yui-ibc-solidity/tree/v0.3.13#for-developers
 
 ```sh
 git clone https://github.com/datachainlab/solidity-protobuf.git
@@ -205,26 +205,30 @@ function sendTransfer(
 `IBCHandler.sendPacket`を呼び出すことで、送信すべきPacketが登録されます。
 
 ```solidity
-function _sendPacket(MiniTokenPacketData.Data memory data, string memory sourcePort, string memory sourceChannel, uint64 timeoutHeight) virtual internal {
-    (Channel.Data memory channel, bool found) = ibcHandler.getChannel(sourcePort, sourceChannel);
-    require(found, "channel not found");
-    ibcHandler.sendPacket(Packet.Data({
-        sequence: ibcHandler.getNextSequenceSend(sourcePort, sourceChannel),
-        source_port: sourcePort,
-        source_channel: sourceChannel,
-        destination_port: channel.counterparty.port_id,
-        destination_channel: channel.counterparty.channel_id,
-        data: MiniTokenPacketData.encode(data),
-        timeout_height: Height.Data({revision_number: 0, revision_height: timeoutHeight}),
-        timeout_timestamp: 0
-    }));
+function _sendPacket(
+    MiniTokenPacketData.Data memory data,
+    string memory sourcePort,
+    string memory sourceChannel,
+    uint64 timeoutHeight
+) internal virtual {
+    ibcHandler.sendPacket(
+        sourcePort,
+        sourceChannel,
+        Height.Data({
+            revision_number: 0,
+            revision_height: timeoutHeight
+        }),
+        0,
+        MiniTokenPacketData.encode(data)
+    );
 }
 ```
 
-### IIBCModule
+### IBCAppBase
 
 IBC ModuleでのChannelハンドシェイクやPacketを受信した際などに、MiniTokenへコールバックしてもらう必要があります。
-yui-ibc-solidityで定義される[IIBCModule](https://github.com/hyperledger-labs/yui-ibc-solidity/blob/v0.3.3/contracts/core/05-port/IIBCModule.sol)インタフェースを実装していきます。
+yui-ibc-solidityで提供されている抽象コントラクトである[IBCAppBase](https://github.com/hyperledger-labs/yui-ibc-solidity/blob/v0.3.13/contracts/apps/commons/IBCAppBase.sol)を継承すると便利です。
+これは以下のような[IIBCModule](https://github.com/hyperledger-labs/yui-ibc-solidity/blob/v0.3.13/contracts/core/05-port/IIBCModule.sol)インタフェースを実装しています。
 
 ```solidity
 interface IIBCModule {
@@ -258,6 +262,8 @@ interface IIBCModule {
     function onRecvPacket(Packet.Data calldata, address relayer) external returns (bytes memory);
 
     function onAcknowledgementPacket(Packet.Data calldata, bytes calldata acknowledgement, address relayer) external;
+
+    function onTimeoutPacket(Packet.Data calldata, address relayer) external;
 }
 ```
 
@@ -274,7 +280,10 @@ interface IIBCModule {
 - onChanCloseInit
 - onChanCloseConfirm
 
-IBCにおけるChannelのライフサイクルについて詳しく知りたい方は、以下を参照ください。
+また、台帳間でタイムアウト処理を行うには以下を実装する必要があります。今回は考慮しません。
+- onTimeoutPacket
+
+IBCにおけるChannelのライフサイクルや、タイムアウトについて詳しく知りたい方は、以下を参照ください。
 
 https://github.com/cosmos/ibc/blob/main/spec/core/ics-004-channel-and-packet-semantics/README.md
 
@@ -316,7 +325,7 @@ function onAcknowledgementPacket(Packet.Data calldata packet, bytes calldata ack
 
 尚、ICS-20の実装例としては以下を参照ください。
 
-https://github.com/hyperledger-labs/yui-ibc-solidity/tree/v0.3.3/contracts/apps
+https://github.com/hyperledger-labs/yui-ibc-solidity/tree/v0.3.13/contracts/apps
 
 ### 通貨単位の区別
 

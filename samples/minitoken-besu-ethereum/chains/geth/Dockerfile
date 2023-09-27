@@ -1,4 +1,4 @@
-FROM ethereum/client-go:v1.11.3
+FROM ethereum/client-go:v1.11.6
 
 ADD geth.password /root/geth.password
 ADD genesis.json  /root/genesis.json
