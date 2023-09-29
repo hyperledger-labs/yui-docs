@@ -55,17 +55,30 @@ MiniToken.deployed()
     .then(event => console.log(event));
 ```
 
+## 台帳IBC1上のBlock高さを確認
+
+IBC0上からIBC1へ向けてPacketを送る際に、Packetがタイムアウトする高さを受信側台帳であるIBC1を基準に指定する必要があります。
+そのため、現在のIBC1上でBlockの高さを確認しておきましょう。
+
+```js
+await web3.eth.getBlockNumber()
+```
+
 ## 台帳IBC0上のAliceから台帳IBC1上のBobへトークン転送
 
 IBC1上のBobへMiniTokenを50だけ転送します。
+Packetが受信側台帳でタイムアウトする高さとして、1つ前で得たIBC1の高さにPacket中継を行うのに十分な高さを追加します。
+例えばIBC1の高さが500だったとして、直後にこの操作を行うのであれば環境にもよりますがここでは1000ほど加えておけば十分すぎるでしょう。
 
 ```js
 const port = "transfer";
 const channel = "channel-0";
 
 const bob = accounts[2];
+// あなたの環境に合わせて設定してください
+const timeoutHeight = 1500
 await MiniToken.deployed()
-    .then(instance => instance.sendTransfer(50, bob, port, channel, 0, {from: alice}));
+    .then(instance => instance.sendTransfer(50, bob, port, channel, timeoutHeight, {from: alice}));
 ```
 
 ## 台帳IBC1上のBobから、MiniToken残高を確認
