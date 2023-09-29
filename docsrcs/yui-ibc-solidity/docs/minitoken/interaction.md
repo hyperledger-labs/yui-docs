@@ -55,17 +55,30 @@ MiniToken.deployed()
     .then(event => console.log(event));
 ```
 
+## Check the block height on ledger IBC1
+
+When sending a Packet from IBC0 to IBC1, it's necessary to specify the height at which the Packet will timeout.
+Therefore, let's check the current block height on IBC1.
+
+```js
+await web3.eth.getBlockNumber()
+```
+
 ## Transfer token from Alice on ledger IBC0 to Bob on ledger IBC1
 
 Transfer 50 MiniTokens to Bob on IBC1.
+For the height at which the Packet will timeout, specify a height that is sufficiently more than previously obtained.
+For instance, if the height of IBC1 was 500, considering that this operation will be performed immediately afterward, adding about 1000 should be enough, depending on the environment.
 
 ```js
 const port = "transfer";
 const channel = "channel-0";
 
 const bob = accounts[2];
+// Please configure according to your environment
+const timeoutHeight = 1500;
 await MiniToken.deployed()
-    .then(instance => instance.sendTransfer(50, bob, port, channel, 0, {from: alice}));
+    .then(instance => instance.sendTransfer(50, bob, port, channel, timeoutHeight, {from: alice}));
 ```
 
 ## Check the MiniToken balance from Bob on the ledger IBC1.
