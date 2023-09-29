@@ -139,7 +139,7 @@ Use [solidity-protobuf](https://github.com/datachainlab/solidity-protobuf) to ge
 First, get solidity-protobuf and install the necessary modules.
 For details on the revision specified by yui-ibc-solidity, please refer to the following:
 
-https://github.com/hyperledger-labs/yui-ibc-solidity/tree/v0.3.13#for-developers
+https://github.com/hyperledger-labs/yui-ibc-solidity/tree/v0.3.14#for-developers
 
 ```sh
 git clone https://github.com/datachainlab/solidity-protobuf.git
@@ -227,8 +227,8 @@ function _sendPacket(
 ### IBCAppBase
 
 When the IBC Module receives a Channel handshake or a Packet, it needs to be called back to MiniToken.
-It is convenient to inherit from the abstract contract [IBCAppBase](https://github.com/hyperledger-labs/yui-ibc-solidity/blob/v0.3.13/contracts/apps/commons/IBCAppBase.sol) provided by `yui-ibc-solidity`.
-This implements the [IIBCModule](https://github.com/hyperledger-labs/yui-ibc-solidity/blob/v0.3.13/contracts/core/05-port/IIBCModule.sol) interface as shown below.
+It is convenient to inherit from the abstract contract [IBCAppBase](https://github.com/hyperledger-labs/yui-ibc-solidity/blob/v0.3.14/contracts/apps/commons/IBCAppBase.sol) provided by `yui-ibc-solidity`.
+This implements the [IIBCModule](https://github.com/hyperledger-labs/yui-ibc-solidity/blob/v0.3.14/contracts/core/05-port/IIBCModule.sol) interface as shown below.
 
 ```solidity
 interface IIBCModule {
@@ -324,7 +324,7 @@ The token implemented here is different from ICS-20.
 
 For an example of ICS-20 implementation, please refer to the following:
 
-https://github.com/hyperledger-labs/yui-ibc-solidity/tree/v0.3.13/contracts/apps
+https://github.com/hyperledger-labs/yui-ibc-solidity/tree/v0.3.14/contracts/apps
 
 ### Distinction between currency units
 
