@@ -57,7 +57,7 @@ MiniToken.deployed()
 
 ## Check the block height on ledger IBC1
 
-When sending a Packet from IBC0 to IBC1, it's necessary to specify the height at which the Packet will timeout.
+When sending a Packet from IBC0 to IBC1, it's necessary to specify the height at which it will timeout based on the receiving ledger IBC1.
 Therefore, let's check the current block height on IBC1.
 
 ```js
@@ -67,7 +67,7 @@ await web3.eth.getBlockNumber()
 ## Transfer token from Alice on ledger IBC0 to Bob on ledger IBC1
 
 Transfer 50 MiniTokens to Bob on IBC1.
-For the height at which the Packet will timeout, specify a height that is sufficiently more than previously obtained.
+For the height at which the Packet will timeout on the receiving ledger, specify a height that adds sufficiently to the one previously obtained for IBC1, ensuring adequate time for Packet relay.
 For instance, if the height of IBC1 was 500, considering that this operation will be performed immediately afterward, adding about 1000 should be enough, depending on the environment.
 
 ```js
