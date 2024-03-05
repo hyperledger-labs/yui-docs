@@ -1,8 +1,52 @@
+# About THIS PROJECT
+
+Project is based on the original proposal made by Hyperledger lab: YUI. A cross-chain solution to allow interopreability between blockchains.
+
+The modifications made here are the following:
+
+- Sending arbitrary data from Blockchain A to Blockchain B
+- Automated execution on Blockchain B of the sending function in order to return a data to Blockchain A after being called
+- Storage of the Blockchain B data on the Blockchain A once received automatically.
+- Use of two Ethereum based blockchains (geth)
+
+This functionalities allow to call from a Blockchain A to a Blockchain B for a data stored exclusively on B and bring it to A without an active member on B sending the information back to A.
+
+# Preparation
+
+Execute `npm install` in the following directories to install dependencies.
+
+- *contracts/minitoken/solidity*
+- *samples/minitoken-ethereum-ethereum*
+
+Once installed, first make sure that on:
+
+- *samples/minitoken-ethereum-ethereum/truffle-config.js*
+
+The following variables are written referring to contract_dir as:
+`contracts_directory: contract_dir,`
+`contracts_build_directory: contract_dir + "/build/contracts",`
+`migrations_directory: contract_dir + "/migrations",`
+
+Execute `make setup`
+
+After it, update  *samples/minitoken-ethereum-ethereum/truffle-config.js* changing `contract_dir` for `contract_dir2` on the variables from before.
+
+Execute `make setup2`
+
+# Tests
+
+You can execute the following tests from *samples/minitoken-ethereum-ethereum* to check the functioning of the project:
+
+- `npx truffle exec test/1-send.js --network=ibc0`
+- `npx truffle test test/1-send.test.js --network=ibc0 --compile-none --migrate-none`
+- `npx truffle test test/2-ibc1.test.js --network=ibc0 --compile-none --migrate-none`
+
+
 # YUI
 
 "YUI" is japanese word to represent knot, join and connect
 
-# Short Description
+# About YUI:
 
 YUI is a lab to achieve interoperability between multiple heterogeneous ledgers. YUI provides modules and middleware for cross-chain communication as well as modules and tools for cross-chain application development, including an explorer to track status and events for cross-chain environments.
 
@@ -10,76 +54,22 @@ For cross-chain communication, the design of YUI is based on Inter Blockchain Co
 
 Modules for cross-chain application development includes one that implements a protocol for atomic operations between ledgers, such as atomic swap of tokens.
 
+## More information
 
-# Scope of Lab
+For more information about YUI, you can find here the original project: 
+- https://github.com/hyperledger-labs/yui-docs/
 
-## Design Principles
-
-### Cross-authentication
-
-By relying on the on-chain verification of the other chain’s state, cross-chain communication can be achieved without any safety concern due to the behavior of off-chain actors
-
-This allows cross-chain message relaying not only to the trusted and privileged actors, but also to any actor that satisfies the ACL of the permissioned chain.
-
-In addition, we aim to apply the method not only to the permissioned chains, but to the public chains as well.
-
-### Provide a unified communication method independent from a specific blockchain/DLT implementation.
-
-This enables application developers to develop chain agnostic protocols.
-
-### Support arbitrary data transfer and computation
-
-Developers can design and implement the specific protocol for its cross-chain application, not limited to token transfer use case.
-
-### Avoid adding components that introduce additional trust (apart from individual blockchains)
-
-Introducing such components may decrease the level of security of a system as it would be bounded by the lowest component in the system.
-
-Also, introducing new (off-chain) components with high fault tolerance will also lead to increased operational costs
-
-### Do not introduce a new layer
-
-Each actor (of ledgers) has only to interact with a respective ledger of its interest to complete a cross-chain operation unless the application has additional requirements.
-
-## Use cases
-
-Cross-chain smart contracts for arbitrary data and procedures, not limited to atomic swap of tokens.
-- Cross-chain token transfer
-- Cross-chain Atomic swap
-  - Example includes delivery versus payment settlement
-- Cross-chain atomic execution of arbitrary procedures
-
-## Current status and future plan
-
-We have already developed modules for Hyperledger Fabric, Hyperledger Besu, and Corda. We plan to apply these modules for practical applications as well as to expand support for other blockchains.
-- At first, we are focusing on permissioned blockchain environment
-
-Aim to enable developers in Hyperledger community to introduce interoperability in their systems and develop cross-chain applications without too many changes and increase the complexity
-
-## Components
-
-Client (on-chain) module and Relayer to support various ledgers in align with the design principles
-- Client module should be designed to support each underlying ledger
-
-Various software to support the development of cross-chain systems
-- Modules to support the development of cross-chain contracts
-  - Implementation of an atomic commit protocol for cross-chain atomic operation
-  - Implementation of authentication for cross-chain contracts
-- System to support the coordination of cross-chain contract and applications
-  - Explorer to track the cross-chain status
-
-
-# Committers
+### YUI Committers
 
 - Jun Kimura - https://github.com/bluele
 - Ryo Sato - https://github.com/3100
 - Masanori Yoshida - https://github.com/siburu
 
-# Contributors
+### YUI Contributors
 
 Please take a look at [CONTRIBUTORS.md](./CONTRIBUTORS.md)
 
-# Repositories
+### YUI Repositories
 
 - https://github.com/hyperledger-labs/yui-fabric-ibc
 - https://github.com/hyperledger-labs/yui-ibc-solidity

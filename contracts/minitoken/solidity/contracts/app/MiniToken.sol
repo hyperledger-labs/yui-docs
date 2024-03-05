@@ -1,19 +1,18 @@
 // SPDX-License-Identifier: Apache-2.0
 pragma solidity ^0.8.9;
 
-import "@hyperledger-labs/yui-ibc-solidity/contracts/apps/commons/IBCAppBase.sol";
-import "@hyperledger-labs/yui-ibc-solidity/contracts/core/25-handler/IBCHandler.sol";
+import "@hyperledger-labs/yui-ibc-solidity/contracts/core/OwnableIBCHandler.sol";
 import "solidity-bytes-utils/contracts/BytesLib.sol";
 import "../lib/Packet.sol";
 
-contract MiniToken is IBCAppBase {
+contract MiniToken is IIBCModule {
     IBCHandler ibcHandler;
 
     using BytesLib for *;
 
     address private owner;
 
-    constructor(IBCHandler ibcHandler_) {
+    constructor(IBCHandler ibcHandler_) public {
         owner = msg.sender;
 
         ibcHandler = ibcHandler_;
@@ -39,8 +38,12 @@ contract MiniToken is IBCAppBase {
         _;
     }
 
-    function ibcAddress() public view override returns (address) {
-        return address(ibcHandler);
+    modifier onlyIBC() {
+        require(
+            msg.sender == address(ibcHandler),
+            "MiniToken: caller is not the ibcHandler"
+        );
+        _;
     }
 
     function sendTransfer(
@@ -125,7 +128,7 @@ contract MiniToken is IBCAppBase {
 
     /// Module callbacks ///
 
-    function onRecvPacket(Packet.Data calldata packet, address /*relayer*/)
+    function onRecvPacket(Packet.Data calldata packet, address relayer)
         external
         virtual
         override
@@ -142,7 +145,7 @@ contract MiniToken is IBCAppBase {
     function onAcknowledgementPacket(
         Packet.Data calldata packet,
         bytes calldata acknowledgement,
-        address /*relayer*/
+        address relayer
     ) external virtual override onlyIBC {
         if (!_isSuccessAcknowledgement(acknowledgement)) {
             _refundTokens(MiniTokenPacketData.decode(packet.data));
@@ -197,15 +200,28 @@ contract MiniToken is IBCAppBase {
         string memory sourceChannel,
         uint64 timeoutHeight
     ) internal virtual {
-        ibcHandler.sendPacket(
+        (Channel.Data memory channel, bool found) = ibcHandler.getChannel(
             sourcePort,
-            sourceChannel,
-            Height.Data({
-                revision_number: 0,
-                revision_height: timeoutHeight
-            }),
-            0,
-            MiniTokenPacketData.encode(data)
+            sourceChannel
+        );
+        require(found, "MiniToken: channel not found");
+        ibcHandler.sendPacket(
+            Packet.Data({
+                sequence: ibcHandler.getNextSequenceSend(
+                    sourcePort,
+                    sourceChannel
+                ),
+                source_port: sourcePort,
+                source_channel: sourceChannel,
+                destination_port: channel.counterparty.port_id,
+                destination_channel: channel.counterparty.channel_id,
+                data: MiniTokenPacketData.encode(data),
+                timeout_height: Height.Data({
+                    revision_number: 0,
+                    revision_height: timeoutHeight
+                }),
+                timeout_timestamp: 0
+            })
         );
     }
 
