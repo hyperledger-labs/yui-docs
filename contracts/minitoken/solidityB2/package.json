@@ -1,0 +1,23 @@
+{
+  "name": "minitoken",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "compile": "truffle compile",
+    "fmt": "npx prettier --write 'contracts/**/*.sol'"
+  },
+  "author": "Datachain, Inc.",
+  "license": "Apache-2.0",
+  "licenses": [
+    {
+      "type": "Apache-2.0",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0"
+    }
+  ],
+  "devDependencies": {
+    "truffle": "5.6.6"
+  },
+  "dependencies": {
+    "@hyperledger-labs/yui-ibc-solidity": "git+https://git@github.com/hyperledger-labs/yui-ibc-solidity.git#v0.3.3"
+  }
+}

@@ -1,0 +1,61 @@
+{
+	"compiler": {
+		"version": "0.8.19+commit.7dd6d404"
+	},
+	"language": "Solidity",
+	"output": {
+		"abi": [],
+		"devdoc": {
+			"kind": "dev",
+			"methods": {},
+			"version": 1
+		},
+		"userdoc": {
+			"kind": "user",
+			"methods": {},
+			"version": 1
+		}
+	},
+	"settings": {
+		"compilationTarget": {
+			"contracts/minitoken/solidity/contracts/lib/PacketMssg.sol": "MiniMessagePacketData"
+		},
+		"evmVersion": "paris",
+		"libraries": {},
+		"metadata": {
+			"bytecodeHash": "ipfs"
+		},
+		"optimizer": {
+			"enabled": false,
+			"runs": 200
+		},
+		"remappings": []
+	},
+	"sources": {
+		"contracts/minitoken/solidity/contracts/lib/PacketMssg.sol": {
+			"keccak256": "0xe80ff3d23055737c62e02daaffe7a4bbbb5d4c2fe65ba5d6a3e5b45353d7ac02",
+			"license": "Apache-2.0",
+			"urls": [
+				"bzz-raw://9ab70c85d47b014df97582595d50b8a09cf61ad0b31d33a21e63020a4a2cc8f0",
+				"dweb:/ipfs/QmT1m9BZJGG1HaiubCoKkJbfMygwp9bdQq8JG36VN3F5rz"
+			]
+		},
+		"https://github.com/hyperledger-labs/yui-ibc-solidity/contracts/proto/GoogleProtobufAny.sol": {
+			"keccak256": "0x23ebb4c95744ea143cfb3c012f8d8af3c9ed5055ff7602e7167519f444416fa9",
+			"license": "Apache-2.0",
+			"urls": [
+				"bzz-raw://17747d0f8278bed9f3d394ca5eb7133a083dfb2eaf5ae57823597bc9a0ebdc5d",
+				"dweb:/ipfs/QmZ9gZ4nE5ciJzt23ihaxEq8TGfQPQzY1vSciQxm6Rt1xD"
+			]
+		},
+		"https://github.com/hyperledger-labs/yui-ibc-solidity/contracts/proto/ProtoBufRuntime.sol": {
+			"keccak256": "0xd72b6aea5f22eb5b594c66df10ac1b24d9edc2ec24813478a4b9bc2878504271",
+			"license": "Apache-2.0",
+			"urls": [
+				"bzz-raw://512f479237b4d87e9c7e0575050fc9df1555c01195da2f9263943eb93cfd2738",
+				"dweb:/ipfs/QmRTcfKuTWC97DX6rAsxtAZBkPDGuKowE19CRwLQAbPpNb"
+			]
+		}
+	},
+	"version": 1
+}

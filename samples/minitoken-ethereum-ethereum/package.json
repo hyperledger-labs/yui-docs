@@ -1,0 +1,28 @@
+{
+  "name": "minitoken-besu-ethereum",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "postinstall": "npm run compile:ibc",
+    "compile": "truffle compile",
+    "compile:ibc": "cd node_modules/@hyperledger-labs/yui-ibc-solidity && truffle compile",
+    "migrate:ibc0": "truffle migrate --network=ibc0 --compile-none",
+    "migrate:ibc1": "truffle migrate --network=ibc1 --compile-none",
+    "fmt": "npx prettier --write 'test/**/*.js' 'truffle-config.js'"
+  },
+  "author": "Datachain, Inc.",
+  "license": "Apache-2.0",
+  "licenses": [
+    {
+      "type": "Apache-2.0",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0"
+    }
+  ],
+  "devDependencies": {
+    "@truffle/hdwallet-provider": "^2.0.15",
+    "truffle": "^5.6.6"
+  },
+  "dependencies": {
+    "@hyperledger-labs/yui-ibc-solidity": "git+https://git@github.com/hyperledger-labs/yui-ibc-solidity.git#v0.3.3"
+  }
+}

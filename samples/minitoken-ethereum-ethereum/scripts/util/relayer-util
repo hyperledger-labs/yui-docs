@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+
+set -eu
+
+source ${SCRIPT_DIR}/util/color
+
+CONF_DIR=${SCRIPT_DIR}/../configs
+DEMO_DIR=${SCRIPT_DIR}/../demo
+BIN_DIR=${SCRIPT_DIR}/../build
+
+RELAYER_CONF="${DEMO_DIR}/.urelayer"
+RLY_BINARY=${BIN_DIR}/uly
+RLY="${RLY_BINARY} --home ${RELAYER_CONF}"
+println "Loaded relayer command: $RLY"
+
+CHAINID_ONE=ibc0
+CHAINID_TWO=ibc1
+PATH_NAME=ibc01
+
